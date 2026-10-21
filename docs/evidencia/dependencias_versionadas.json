@@ -1,0 +1,6 @@
+{
+  "laravel/framework": "v13.37.0",
+  "laravel/sanctum": "v4.3.3",
+  "league/flysystem-aws-s3-v3": "3.35.3",
+  "phpunit/phpunit": "12.5.40"
+}

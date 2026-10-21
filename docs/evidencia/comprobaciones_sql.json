@@ -1,0 +1,17 @@
+[
+  {
+    "name": "rol_en_ambito_incorrecto",
+    "sqlstate": "23514",
+    "passed": true
+  },
+  {
+    "name": "solicitud_juridica_sin_antecedentes",
+    "sqlstate": "23514",
+    "passed": true
+  },
+  {
+    "name": "modificacion_del_historial",
+    "sqlstate": "23514",
+    "passed": true
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "membership": "member",
+  "legal": "natural",
+  "name": "Persona de ejemplo",
+  "identifier": "Documento de ejemplo",
+  "email": "postulante@example.org",
+  "address": "Domicilio de ejemplo",
+  "aiActivity": "Desarrollo e investigación de inteligencia artificial.",
+  "declaration_accepted": true
+}

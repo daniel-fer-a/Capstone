@@ -1,0 +1,8 @@
+PHP: 8.4.1
+Laravel: 13.37.0
+PostgreSQL server_version_num: 180006
+public.users: presente
+cchia_m02.role_assignments: presente
+cchia_admissions.applications: presente
+Revisión institucional: deshabilitada
+Almacenamiento: local

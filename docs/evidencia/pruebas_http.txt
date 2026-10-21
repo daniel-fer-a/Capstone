@@ -1,0 +1,39 @@
+PHPUnit 12.5.40 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.1
+Configuration: /workspace/scratch/cea9e619070e/outputs/cchia_backend_20261016/backend/phpunit.xml
+
+.........................                                         25 / 25 (100%)
+
+Time: 00:02.008, Memory: 52.50 MB
+
+Admissions (Tests\Feature\Admissions)
+ ✔ Natural application is persisted without creating a user or membership
+ ✔ Natural collaborator is distinct from a member
+ ✔ Tracking secret is returned once and only its hash is saved
+ ✔ Identity fields cannot be mixed between person types
+ ✔ Client cannot assign status or roles
+ ✔ Missing identity and review confirmation are rejected
+ ✔ Company application requires documents and two sponsors
+ ✔ Company application has private documents and verified sponsors
+ ✔ Duplicate sponsors are rejected before persistence
+ ✔ Ineffective members cannot sponsor with data set #0
+ ✔ Ineffective members cannot sponsor with data set #1
+ ✔ Ineffective members cannot sponsor with data set #2
+ ✔ Ineffective members cannot sponsor with data set #3
+ ✔ Ineffective members cannot sponsor with data set #4
+ ✔ Ineffective members cannot sponsor with data set #5
+ ✔ Legal collaborator is disabled until its requirements are confirmed
+ ✔ Legal collaborator technical route requires the pj evidence when enabled
+ ✔ File content is checked independently of its pdf extension
+ ✔ Files over the design limit are rejected
+ ✔ Failed file write rolls back metadata and removes the first file
+ ✔ Anonymous requests cannot read an application or its documents
+ ✔ A role alone does not grant sensitive access
+ ✔ Explicit permission and current assignment allow private read
+ ✔ A document cannot be requested under another application
+
+Submission Rate Limit (Tests\Feature\SubmissionRateLimit)
+ ✔ Public submission rate is limited
+
+OK (25 tests, 117 assertions)

@@ -1,0 +1,11 @@
+vendor
+node_modules
+.env
+.env.testing
+.git
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/testing/*
+storage/app/private/*
+.phpunit.result.cache

@@ -1,0 +1,9 @@
+{
+  "php_source_files": 41,
+  "syntax_errors": [],
+  "target_postgresql": "18.x",
+  "http_tests_passed": 25,
+  "http_assertions": 117,
+  "native_client_cases_pending": 4,
+  "sql_core_negative_checks_passed": 3
+}

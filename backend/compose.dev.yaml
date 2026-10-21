@@ -1,0 +1,36 @@
+name: cchia-admissions-dev
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-cchia_dev}
+      POSTGRES_USER: ${DB_USERNAME:-cchia_dev}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Define DB_PASSWORD en backend/.env}
+    ports:
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
+    volumes:
+      - pg18_data:/var/lib/postgresql
+      - ./docker/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    env_file: .env
+    environment:
+      DB_HOST: db
+      DB_PORT: "5432"
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - private_files:/app/storage/app/private
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  pg18_data:
+  private_files:

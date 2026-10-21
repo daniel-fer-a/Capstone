@@ -1,0 +1,12 @@
+
+   INFO  Preparing database.  
+
+  Creating migration table ...................................... 27.03ms DONE
+
+   INFO  Running migrations.  
+
+  2026_10_16_000001_create_isolated_foundation .................. 42.99ms DONE
+  2026_10_16_000002_install_modelo_02_reference ................ 262.20ms DONE
+  2026_10_16_000003_add_scope_checks_and_permission_catalog ..... 35.09ms DONE
+  2026_10_16_000004_create_admissions_schema .................... 35.52ms DONE
+

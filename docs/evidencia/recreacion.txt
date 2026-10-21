@@ -1,0 +1,8 @@
+
+   INFO  Running migrations.  
+
+  2026_10_16_000001_create_isolated_foundation .................. 30.20ms DONE
+  2026_10_16_000002_install_modelo_02_reference ................. 88.86ms DONE
+  2026_10_16_000003_add_scope_checks_and_permission_catalog ...... 3.88ms DONE
+  2026_10_16_000004_create_admissions_schema .................... 29.11ms DONE
+

@@ -1,0 +1,8 @@
+
+   INFO  Rolling back migrations.  
+
+  2026_10_16_000004_create_admissions_schema .................... 23.57ms DONE
+  2026_10_16_000003_add_scope_checks_and_permission_catalog ...... 7.52ms DONE
+  2026_10_16_000002_install_modelo_02_reference ................. 30.37ms DONE
+  2026_10_16_000001_create_isolated_foundation .................. 31.26ms DONE
+
