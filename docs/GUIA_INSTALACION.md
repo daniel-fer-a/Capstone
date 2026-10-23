@@ -103,7 +103,7 @@ Por defecto ADMISSIONS_STORAGE_DRIVER=local guarda los archivos fuera de public.
 
 Mantener ADMISSIONS_REVIEW_ENABLED=false hasta definir la política sensible. Cambiarlo a true no crea usuarios, roles ni permisos: las rutas requieren además Sanctum, una asignación Directorio global efectiva y los permisos explícitos admissions.read y admissions.documents.read. El inicio de sesión aún no está implementado.
 
-## Integración con su proyecto
+## Integración con el proyecto
 
 Esta base eligió varchar(36) para las claves heredadas del Modelo 02. Si su base existente usa UUID en users.id, no basta con copiar estas migraciones. Primero comparar el esquema y los datos reales. Los contratos mínimos companies/commissions/resources deben reemplazarse por una integración revisada con el proyecto completo.
 
