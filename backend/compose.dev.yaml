@@ -6,8 +6,8 @@ services:
       POSTGRES_DB: ${DB_DATABASE:-cchia_dev}
       POSTGRES_USER: ${DB_USERNAME:-cchia_dev}
       POSTGRES_PASSWORD: ${DB_PASSWORD:?Define DB_PASSWORD en backend/.env}
-    ports:
-      - "127.0.0.1:${DB_PORT:-5432}:5432"
+    #ports:
+    #  - "127.0.0.1:${DB_PORT:-5432}:5432"
     volumes:
       - pg18_data:/var/lib/postgresql
       - ./docker/init:/docker-entrypoint-initdb.d:ro
@@ -24,13 +24,24 @@ services:
     environment:
       DB_HOST: db
       DB_PORT: "5432"
+    command: php artisan serve --host=0.0.0.0 --port=8000 --no-reload
     ports:
       - "127.0.0.1:8000:8000"
     volumes:
+      - .:/app
+      - /app/vendor
       - private_files:/app/storage/app/private
     depends_on:
       db:
         condition: service_healthy
+  frontend:
+    image: node:24
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    volumes:
+      - ../frontend:/app
+    ports:
+      - "127.0.0.1:5173:5173"
 volumes:
   pg18_data:
   private_files:
