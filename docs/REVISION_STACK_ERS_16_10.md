@@ -1,6 +1,6 @@
 # Revisión del stack · ERS 16/10/2026
 
-Se revisaron nuevamente las páginas 14, 15, 16, 17, 18 y 19 de ERS-CCHIA-2026-10-16.pdf. La ERS continúa aprobada y no fue editada.
+Se revisaron nuevamente las páginas 14, 15, 16, 17, 18 y 19 de ERS-CCHIA-2026-10-16.pdf. 
 
 | Componente | Página 14 | Anexo A-04, página 18 | Referencia de trabajo |
 |---|---|---|---|
@@ -44,13 +44,3 @@ La frase del anexo y la página 19 no garantiza el mismo periodo para todos los 
 
 El PHP de las pruebas es 8.4.1. No se distribuye ese binario como runtime productivo. Para una instalación real deben mantenerse los parches vigentes de cada rama y auditar las dependencias.
 
-Fuentes oficiales consultadas:
-
-- https://laravel.com/docs/13.x/releases
-- https://www.php.net/supported-versions.php
-- https://nodejs.org/en/blog/migrations/v22-to-v24
-- https://www.postgresql.org/support/versioning/
-- https://vite.dev/releases
-- https://vite.dev/guide/
-- https://docs.docker.com/compose/
-- https://github.com/docker-library/docs/blob/master/postgres/content.md
