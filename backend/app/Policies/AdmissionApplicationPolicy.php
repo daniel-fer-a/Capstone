@@ -19,6 +19,23 @@ class AdmissionApplicationPolicy
         return $allowed;
     }
 
+    public function viewAny(User $user): bool
+    {
+        $allowed = $this->access->reviewerHasPermission($user->id, 'admissions.read');
+        $this->audit->record($user, 'admissions.list', 'queue', $allowed ? 'allowed' : 'denied');
+
+        return $allowed;
+    }
+
+    public function startReview(User $user, AdmissionApplication $application): bool
+    {
+        $allowed = $this->access->reviewerHasPermission($user->id, 'admissions.read')
+            && $this->access->reviewerHasPermission($user->id, 'admissions.review.start');
+        $this->audit->record($user, 'admissions.review.start', $application->id, $allowed ? 'allowed' : 'denied');
+
+        return $allowed;
+    }
+
     public function downloadDocument(User $user, AdmissionApplication $application): bool
     {
         $allowed = $this->access->reviewerHasPermission($user->id, 'admissions.read')

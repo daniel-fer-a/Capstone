@@ -3,9 +3,11 @@ import { createContext, useContext } from 'react'
 export type DatosNatural = {
   nombres: string
   apellidos: string
+  edad: string
   identificacion: string
   correo: string
-  domicilio: string
+  region: string
+  comuna: string
   actividad: string
 }
 
@@ -15,6 +17,7 @@ export type Comprobante = {
   estado: string
   recibidaEn: string
   codigoSeguimiento: string
+  prueba: boolean
 }
 
 export type PostulacionCtx = {
@@ -25,6 +28,7 @@ export type PostulacionCtx = {
   comprobante: Comprobante | null
   setComprobante: (c: Comprobante) => void
   reiniciar: () => void
+  claveEnvio: string
 }
 
 export const PostulacionContext = createContext<PostulacionCtx | null>(null)

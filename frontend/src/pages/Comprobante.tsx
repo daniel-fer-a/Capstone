@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import Pasos from '../components/Pasos'
-import { Aviso, botonPrimario, botonSecundario, Pagina } from '../components/ui'
+import { Aviso, Pagina } from '../components/ui'
+import { botonPrimario, botonSecundario } from '../components/estilos'
 import { fechaLarga } from '../lib/formato'
 import { usePostulacion } from '../postulacion/postulacionContext'
 
@@ -9,8 +10,8 @@ export default function Comprobante() {
   const { comprobante } = usePostulacion()
   const [verCodigo, setVerCodigo] = useState(false)
   const [copiado, setCopiado] = useState(false)
+  const [errorCopia, setErrorCopia] = useState(false)
 
-  // El código solo se entrega una vez: avisamos antes de cerrar o recargar.
   useEffect(() => {
     if (!comprobante) return
     const aviso = (ev: BeforeUnloadEvent) => ev.preventDefault()
@@ -24,7 +25,7 @@ export default function Comprobante() {
         migas="Postulación / Comprobante"
         etiqueta="Comprobante"
         titulo="No hay un comprobante para mostrar"
-        bajada="Por seguridad, el código de seguimiento se muestra una sola vez, al enviar la postulación."
+        bajada="Por seguridad, el código de seguimiento no se conserva al cerrar o recargar esta página."
       >
         <Link to="/postular" className={botonSecundario}>Ir a postular</Link>
       </Pagina>
@@ -35,8 +36,10 @@ export default function Comprobante() {
     try {
       await navigator.clipboard.writeText(comprobante.codigoSeguimiento)
       setCopiado(true)
+      setErrorCopia(false)
     } catch {
       setCopiado(false)
+      setErrorCopia(true)
     }
   }
 
@@ -50,13 +53,14 @@ export default function Comprobante() {
       '',
       'Guarda este archivo en un lugar seguro y no compartas el código.',
       'La recepción no otorga membresía ni crea una cuenta de acceso.',
+      comprobante.prueba ? 'Registro de prueba local; no acredita los patrocinios institucionales.' : '',
     ].join('\r\n')
     const url = URL.createObjectURL(new Blob([texto], { type: 'text/plain;charset=utf-8' }))
     const a = document.createElement('a')
     a.href = url
     a.download = `comprobante-${comprobante.folio}.txt`
     a.click()
-    URL.revokeObjectURL(url)
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
 
   return (
@@ -68,7 +72,8 @@ export default function Comprobante() {
     >
       <div className="flex flex-col gap-6 md:flex-row">
         <Pasos actual={4} />
-        <section className="flex-1 rounded-xl border border-line bg-white p-6">
+        <section className="min-w-0 flex-1 rounded-xl border border-line bg-white p-6">
+          {comprobante.prueba && <div className="mb-5"><Aviso tipo="warn">Registro de prueba local. No constituye una postulación institucional completa.</Aviso></div>}
           <h2 className="text-2xl font-bold text-navy">Postulación recibida</h2>
           <span className="mt-2 inline-block rounded-full bg-tint px-3 py-1 text-xs font-bold text-navy">Recibida</span>
 
@@ -84,7 +89,7 @@ export default function Comprobante() {
           </dl>
 
           <p className="mt-4 text-sm">
-            El código privado se entrega una sola vez. Guárdalo junto con el folio antes de cerrar esta pantalla.
+            Guarda el código privado junto con el folio antes de cerrar esta pantalla.
           </p>
 
           <div className="mt-3 rounded-md border border-line p-3">
@@ -101,6 +106,7 @@ export default function Comprobante() {
               </button>
             )}
           </div>
+          {errorCopia && <p role="status" className="mt-2 text-sm text-danger">No pudimos copiar el código. Puedes seleccionarlo o descargar el comprobante.</p>}
           <p className="mt-1.5 text-xs text-muted">No compartas tu código en grupos ni en capturas de pantalla.</p>
 
           <div className="mt-5 flex flex-wrap gap-3">

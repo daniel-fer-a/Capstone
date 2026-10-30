@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { botonPrimario, botonSecundario } from '../components/ui'
+import { botonPrimario, botonSecundario } from '../components/estilos'
 
 const PUNTOS = [
   ['Presenta tus antecedentes', 'Datos y documentos según tu modalidad.'],
@@ -12,10 +12,10 @@ export default function Home() {
     <div className="mx-auto max-w-5xl px-5 py-14">
       <div className="grid items-center gap-10 md:grid-cols-2">
         <div>
-          <span className="inline-block rounded-full bg-tint px-3 py-1 text-xs font-bold text-teal">
+          <span className="inline-block rounded-full bg-tint px-3 py-1 text-xs font-bold text-navy">
             Ingreso de socios
           </span>
-          <h1 className="mt-4 text-5xl font-extrabold leading-tight text-navy">
+          <h1 className="mt-4 text-4xl font-extrabold leading-tight text-navy sm:text-5xl">
             Tu experiencia en IA, en comunidad.
           </h1>
           <p className="mt-5 text-lg text-muted">

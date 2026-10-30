@@ -1,3 +1,4 @@
+import IntakeNotice from '../components/IntakeNotice'
 import { Link, useNavigate } from 'react-router'
 import { Aviso, Pagina } from '../components/ui'
 import { usePostulacion } from '../postulacion/postulacionContext'
@@ -18,6 +19,7 @@ export default function Modalidad() {
       titulo="¿Cómo quieres postular?"
       bajada="Selecciona la modalidad que corresponde a tu solicitud."
     >
+      <IntakeNotice />
       <div className="grid gap-5 md:grid-cols-2">
         <button
           type="button"

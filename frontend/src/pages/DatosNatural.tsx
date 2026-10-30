@@ -1,12 +1,14 @@
+import IntakeNotice from '../components/IntakeNotice'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useLocation, useNavigate } from 'react-router'
 import Pasos from '../components/Pasos'
-import { botonPrimario, botonSecundario, describedBy, Field, inputCls, Pagina } from '../components/ui'
+import { Field, Pagina } from '../components/ui'
+import { botonPrimario, botonSecundario, describedBy, inputCls } from '../components/estilos'
 import type { CampoFormulario } from '../lib/api'
 import { usePostulacion, type DatosNatural as Datos } from '../postulacion/postulacionContext'
 
-const CAMPOS_PASO_1: CampoFormulario[] = ['nombres', 'apellidos', 'identificacion', 'correo', 'domicilio', 'actividad']
+const CAMPOS_PASO_1: CampoFormulario[] = ['nombres', 'apellidos', 'edad', 'identificacion', 'correo', 'region', 'comuna', 'actividad']
 
 export default function DatosNatural() {
   const navigate = useNavigate()
@@ -25,7 +27,9 @@ export default function DatosNatural() {
       apellidos: '',
       identificacion: '',
       correo: '',
-      domicilio: '',
+      edad: '',
+      region: '',
+      comuna: '',
       actividad: '',
     },
   })
@@ -39,7 +43,7 @@ export default function DatosNatural() {
   }, [erroresServidor, setError])
 
   const continuar = handleSubmit((valores) => {
-    setDatos(valores)
+    setDatos(Object.fromEntries(Object.entries(valores).map(([k, v]) => [k, v.trim()])) as Datos)
     navigate('/postular/natural/antecedentes')
   })
 
@@ -52,6 +56,7 @@ export default function DatosNatural() {
       titulo="Cuéntanos sobre ti"
       bajada="Completa los datos para identificar la solicitud y la actividad vinculada con la inteligencia artificial."
     >
+      <IntakeNotice />
       <div className="flex flex-col gap-6 md:flex-row">
         <Pasos actual={1} />
         <form onSubmit={continuar} noValidate className="flex-1 rounded-xl border border-line bg-white p-6">
@@ -84,6 +89,17 @@ export default function DatosNatural() {
                   maxLength: { value: 120, message: 'Usa un máximo de 120 caracteres.' },
                 })}
               />
+            </Field>
+          </div>
+
+          <div className="mt-5">
+            <Field id="edad" label="Edad" hint="Indica tu edad en años cumplidos." error={e('edad')}>
+              <input id="edad" type="number" min="0" max="32767" step="1" inputMode="numeric"
+                className={inputCls(!!e('edad'))} aria-invalid={!!e('edad')}
+                aria-describedby={describedBy('edad', e('edad'))}
+                {...register('edad', {
+                  validate: (v) => /^\d+$/.test(v) && Number(v) <= 32767 || 'Ingresa una edad válida en años cumplidos.',
+                })} />
             </Field>
           </div>
 
@@ -125,24 +141,22 @@ export default function DatosNatural() {
             </Field>
           </div>
 
-          <div className="mt-5">
-            <Field
-              id="domicilio"
-              label="Región y comuna"
-              hint="Ejemplo: IX Región, Temuco."
-              error={e('domicilio')}
-            >
-              <input
-                id="domicilio"
-                autoComplete="off"
-                className={inputCls(!!e('domicilio'))}
-                aria-invalid={!!e('domicilio')}
-                aria-describedby={describedBy('domicilio', e('domicilio'))}
-                {...register('domicilio', {
-                  validate: (v) => v.trim().length > 0 || 'Indica tu región y comuna.',
-                  maxLength: { value: 500, message: 'Usa un máximo de 500 caracteres.' },
-                })}
-              />
+          <div className="mt-5 grid gap-5 sm:grid-cols-2">
+            <Field id="region" label="Región" hint="Ejemplo: La Araucanía." error={e('region')}>
+              <input id="region" autoComplete="address-level1" className={inputCls(!!e('region'))}
+                aria-invalid={!!e('region')} aria-describedby={describedBy('region', e('region'))}
+                {...register('region', {
+                  validate: (v) => v.trim().length > 0 || 'Indica tu región.',
+                  maxLength: { value: 120, message: 'Usa un máximo de 120 caracteres.' },
+                })} />
+            </Field>
+            <Field id="comuna" label="Comuna" hint="Ejemplo: Temuco." error={e('comuna')}>
+              <input id="comuna" autoComplete="address-level2" className={inputCls(!!e('comuna'))}
+                aria-invalid={!!e('comuna')} aria-describedby={describedBy('comuna', e('comuna'))}
+                {...register('comuna', {
+                  validate: (v) => v.trim().length > 0 || 'Indica tu comuna.',
+                  maxLength: { value: 120, message: 'Usa un máximo de 120 caracteres.' },
+                })} />
             </Field>
           </div>
 

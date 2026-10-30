@@ -1,16 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 
-export const inputCls = (error: boolean) =>
-  `w-full rounded-md border bg-white px-3.5 py-3 text-ink placeholder:text-muted/70 ${
-    error ? 'border-danger' : 'border-line hover:border-muted/60'
-  }`
-
-export const botonPrimario =
-  'inline-flex items-center justify-center gap-2 rounded-md bg-navy px-5 py-3 text-sm font-bold text-white hover:bg-navy/90 disabled:cursor-not-allowed disabled:opacity-55'
-export const botonSecundario =
-  'inline-flex items-center justify-center gap-2 rounded-md border border-line bg-white px-5 py-3 text-sm font-bold text-navy hover:bg-tint'
-
 export function Pagina({
   migas,
   etiqueta,
@@ -30,7 +20,7 @@ export function Pagina({
         <Link to="/" className="hover:underline">Inicio</Link> / {migas}
       </nav>
       <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-navy">{etiqueta}</p>
-      <h1 className="mt-1 text-4xl font-extrabold text-navy">{titulo}</h1>
+      <h1 className="mt-1 text-3xl font-extrabold text-navy sm:text-4xl">{titulo}</h1>
       {bajada && <p className="mt-3 max-w-2xl text-lg text-muted">{bajada}</p>}
       <div className="mt-8">{children}</div>
     </div>
@@ -61,10 +51,6 @@ export function Field({
       )}
     </div>
   )
-}
-
-export function describedBy(id: string, error?: string) {
-  return `${id}-${error ? 'error' : 'hint'}`
 }
 
 export function Aviso({

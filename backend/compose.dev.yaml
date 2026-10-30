@@ -6,8 +6,6 @@ services:
       POSTGRES_DB: ${DB_DATABASE:-cchia_dev}
       POSTGRES_USER: ${DB_USERNAME:-cchia_dev}
       POSTGRES_PASSWORD: ${DB_PASSWORD:?Define DB_PASSWORD en backend/.env}
-    #ports:
-    #  - "127.0.0.1:${DB_PORT:-5432}:5432"
     volumes:
       - pg18_data:/var/lib/postgresql
       - ./docker/init:/docker-entrypoint-initdb.d:ro
@@ -37,11 +35,15 @@ services:
   frontend:
     image: node:24
     working_dir: /app
-    command: sh -c "npm install && npm run dev"
+    command: sh -c "npm ci --no-audit --no-fund && npm run dev"
+    environment:
+      API_PROXY_TARGET: http://api:8000
     volumes:
       - ../frontend:/app
+      - frontend_modules:/app/node_modules
     ports:
       - "127.0.0.1:5173:5173"
 volumes:
   pg18_data:
   private_files:
+  frontend_modules:
