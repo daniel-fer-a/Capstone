@@ -13,7 +13,9 @@ class AdmissionCapabilitiesController extends Controller
         return response()->json(['data' => [
             'natural_submission_enabled' => $pilot,
             'member_sponsors_required' => !$pilot,
-            'sponsor_channel_available' => false,
+            'sponsor_channel_available' => (bool) config('admissions.sponsorships_enabled'),
+            'juridical_submission_enabled' => (bool) config('admissions.sponsorships_enabled'),
+            'staged_submission_enabled' => (bool) config('admissions.sponsorships_enabled'),
             'local_pilot' => $pilot,
         ]])->header('Cache-Control', 'no-store');
     }

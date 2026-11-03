@@ -26,6 +26,7 @@ export default function Layout() {
             <NavLink to="/" end className={enlace}>Inicio</NavLink>
             <NavLink to="/postular" className={enlace}>Postular</NavLink>
             <NavLink to="/seguimiento" className={enlace}>Seguimiento</NavLink>
+            <NavLink to="/continuar" className={enlace}>Retomar</NavLink>
             <Link
               to="/ingresar"
               className="ml-2 rounded-md border border-line px-4 py-2 text-sm font-bold text-navy hover:bg-tint"

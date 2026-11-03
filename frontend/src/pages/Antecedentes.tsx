@@ -43,7 +43,7 @@ export default function Antecedentes() {
       bajada="Si tienes un respaldo de tu actividad, puedes adjuntarlo. Es opcional."
     >
       <div className="flex flex-col gap-6 md:flex-row">
-        <Pasos actual={2} />
+        <Pasos actual={2} piloto />
         <section className="min-w-0 flex-1 rounded-xl border border-line bg-white p-6">
           <h2 className="text-xl font-bold text-navy">Respaldo de tu actividad (opcional)</h2>
           <p className="mb-5 text-sm text-muted">PDF, JPG o PNG. Máximo 5 MB.</p>

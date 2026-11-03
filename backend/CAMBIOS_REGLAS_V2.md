@@ -1,5 +1,7 @@
 # Reglas 2026-10-27-base-2 (cambios sobre el paquete del 16/10)
 
+Este documento conserva el registro histórico de Fabián. El flujo vigente de nuevas postulaciones se describe en [README_FLUJO_V3.md](README_FLUJO_V3.md): patrocinios confirmados antes de documentos y dos adjuntos para personas jurídicas. Las reglas siguientes no reemplazan ese contrato actual.
+
 Decisiones del equipo tras revisar la maqueta de alta fidelidad.
 
 | Tema | Antes | Ahora |

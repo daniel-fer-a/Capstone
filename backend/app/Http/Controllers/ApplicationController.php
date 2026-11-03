@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class ApplicationController extends Controller
 {
@@ -72,8 +73,46 @@ class ApplicationController extends Controller
     public function show(AdmissionApplication $application): JsonResponse
     {
         Gate::authorize('view', $application);
-        $application->load(['documents', 'sponsors', 'events.actor:id,name']);
+        $application->load(['documents', 'sponsors.user:id,name', 'events.actor:id,name', 'resolution']);
 
         return response()->json(['data' => $application])->header('Cache-Control', 'no-store');
+    }
+
+    public function recordDecision(AdmissionApplication $application, Request $request): JsonResponse
+    {
+        Gate::authorize('recordDecision', $application);
+        foreach (['reason', 'minutes_reference'] as $field) {
+            if (is_string($request->input($field))) $request->merge([$field => trim($request->input($field))]);
+        }
+        $data = $request->validate([
+            'outcome' => ['required', Rule::in(['approved', 'rejected'])],
+            'reason' => ['required', 'string', 'max:10000', 'not_regex:/\\x00/'],
+            'minutes_reference' => ['required', 'string', 'max:255', 'not_regex:/\\x00/'],
+            'meeting_date' => ['required', 'date_format:Y-m-d', 'before_or_equal:'.now('America/Santiago')->toDateString(),
+                'after_or_equal:'.$application->submitted_at->setTimezone('America/Santiago')->toDateString()],
+            'actor_user_id' => ['prohibited'], 'decision_at' => ['prohibited'], 'roles' => ['prohibited'],
+        ]);
+        $resolution = DB::transaction(function () use ($application, $request, $data) {
+            $locked = AdmissionApplication::query()->lockForUpdate()->findOrFail($application->id);
+            abort_if($locked->rules_version === config('admissions.pilot_rules_version'), 409, 'Una prueba local no recibe una resolución institucional.');
+            $previous = $locked->resolution()->first();
+            if ($previous) {
+                abort_unless($previous->outcome === $data['outcome'] && $previous->reason === $data['reason']
+                    && $previous->minutes_reference === $data['minutes_reference'] && $previous->meeting_date->toDateString() === $data['meeting_date']
+                    && $previous->recorded_by_user_id === $request->user()->id, 409, 'La resolución inicial ya está registrada y no se sobrescribe.');
+                return $previous;
+            }
+            abort_unless($locked->status === 'under_review', 409, 'Inicia la revisión antes de registrar el acuerdo del Directorio.');
+            $resolution = $locked->resolution()->create([...$data, 'recorded_by_user_id' => $request->user()->id, 'recorded_at' => now()]);
+            $locked->update(['status' => $data['outcome'], 'decision_reason' => $data['reason'],
+                'decision_at' => $resolution->recorded_at, 'decision_by_user_id' => $request->user()->id]);
+            $locked->events()->create(['actor_user_id' => $request->user()->id, 'actor_kind' => 'institutional',
+                'action' => 'application.decision_recorded', 'outcome' => 'success',
+                'metadata' => ['status' => $data['outcome'], 'resolution_id' => $resolution->id], 'occurred_at' => now()]);
+            DB::statement('SET CONSTRAINTS ALL IMMEDIATE');
+            DB::statement('SET CONSTRAINTS ALL DEFERRED');
+            return $resolution;
+        });
+        return response()->json(['data' => $resolution])->header('Cache-Control', 'no-store');
     }
 }

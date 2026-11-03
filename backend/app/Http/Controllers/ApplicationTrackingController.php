@@ -19,9 +19,11 @@ class ApplicationTrackingController extends Controller
         $labels = [
             'application.submitted' => 'Solicitud recibida',
             'application.review_started' => 'Revisión iniciada por el Directorio',
+            'application.decision_recorded' => 'Resolución del Directorio registrada',
         ];
         $history = $application->events()->whereIn('action', array_keys($labels))->get()
             ->map(fn ($event) => ['action' => $event->action, 'label' => $labels[$event->action], 'occurred_at' => $event->occurred_at->toIso8601String()]);
+        $resolution = $application->resolution()->first();
 
         return response()->json(['data' => [
             'reference' => $application->reference,
@@ -29,6 +31,8 @@ class ApplicationTrackingController extends Controller
             'submitted_at' => $application->submitted_at->toIso8601String(),
             'decision_at' => $application->decision_at?->toIso8601String(),
             'history' => $history,
+            'decision' => $resolution ? ['outcome' => $resolution->outcome, 'reason' => $resolution->reason,
+                'meeting_date' => $resolution->meeting_date->toDateString()] : null,
         ]])->header('Cache-Control', 'no-store');
     }
 }

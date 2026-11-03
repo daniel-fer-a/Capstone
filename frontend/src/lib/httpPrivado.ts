@@ -1,6 +1,6 @@
 import { ApiError, esObjeto, solicitudJson } from './api.ts'
 
-export type Sesion = { id: string; name: string; email: string; can_review: boolean; can_start_review: boolean }
+export type Sesion = { id: string; name: string; email: string; can_review: boolean; can_start_review: boolean; can_sponsor?: boolean; can_record_decision?: boolean }
 
 async function csrf(): Promise<string> {
   const respuesta = await fetch('/sanctum/csrf-cookie', { credentials: 'same-origin', headers: { Accept: 'application/json' }, cache: 'no-store' })

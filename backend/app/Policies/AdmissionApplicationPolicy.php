@@ -44,4 +44,12 @@ class AdmissionApplicationPolicy
 
         return $allowed;
     }
+
+    public function recordDecision(User $user, AdmissionApplication $application): bool
+    {
+        $allowed = $this->access->reviewerHasPermission($user->id, 'admissions.read')
+            && $this->access->reviewerHasPermission($user->id, 'admissions.decisions.record');
+        $this->audit->record($user, 'admissions.decisions.record', $application->id, $allowed ? 'allowed' : 'denied');
+        return $allowed;
+    }
 }

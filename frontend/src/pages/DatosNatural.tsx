@@ -1,7 +1,7 @@
 import IntakeNotice from '../components/IntakeNotice'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { useLocation, useNavigate } from 'react-router'
+import { Navigate, useLocation, useNavigate } from 'react-router'
 import Pasos from '../components/Pasos'
 import { Field, Pagina } from '../components/ui'
 import { botonPrimario, botonSecundario, describedBy, inputCls } from '../components/estilos'
@@ -13,7 +13,7 @@ const CAMPOS_PASO_1: CampoFormulario[] = ['nombres', 'apellidos', 'edad', 'ident
 export default function DatosNatural() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { datos, setDatos } = usePostulacion()
+  const { datos, setDatos, setJuridica, previa } = usePostulacion()
   const erroresServidor = (location.state as { errores?: Partial<Record<CampoFormulario, string>> } | null)?.errores
 
   const {
@@ -44,10 +44,12 @@ export default function DatosNatural() {
 
   const continuar = handleSubmit((valores) => {
     setDatos(Object.fromEntries(Object.entries(valores).map(([k, v]) => [k, v.trim()])) as Datos)
-    navigate('/postular/natural/antecedentes')
+    setJuridica(null)
+    navigate('/postular/patrocinios')
   })
 
   const e = (campo: keyof Datos) => errors[campo]?.message
+  if (previa) return <Navigate to="/postular/patrocinios" replace />
 
   return (
     <Pagina

@@ -71,7 +71,7 @@ export default function Comprobante() {
       bajada="Conserva el comprobante y el código privado para consultar el avance de tu solicitud."
     >
       <div className="flex flex-col gap-6 md:flex-row">
-        <Pasos actual={4} />
+        <Pasos actual={comprobante.prueba ? 4 : 5} piloto={comprobante.prueba} />
         <section className="min-w-0 flex-1 rounded-xl border border-line bg-white p-6">
           {comprobante.prueba && <div className="mb-5"><Aviso tipo="warn">Registro de prueba local. No constituye una postulación institucional completa.</Aviso></div>}
           <h2 className="text-2xl font-bold text-navy">Postulación recibida</h2>

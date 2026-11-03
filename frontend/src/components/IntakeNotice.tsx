@@ -14,5 +14,7 @@ export default function IntakeNotice() {
   if (!capacidad) return null
   return <div className="mb-5"><Aviso tipo="warn">{capacidad.local_pilot
     ? 'Estás en un entorno de pruebas. Usa únicamente antecedentes ficticios; estos registros no constituyen una postulación institucional completa.'
-    : 'Puedes revisar el formulario. El envío requiere dos socios patrocinadores y se habilitará cuando esté disponible el canal privado para acreditarlos.'}</Aviso></div>
+    : capacidad.sponsor_channel_available
+      ? 'Primero solicita dos patrocinios. Cuando ambos socios los confirmen desde sus cuentas, podrás continuar con los documentos y el envío.'
+      : 'La solicitud de patrocinios no está disponible en este momento. Puedes retomar un registro existente desde la opción Retomar.'}</Aviso></div>
 }

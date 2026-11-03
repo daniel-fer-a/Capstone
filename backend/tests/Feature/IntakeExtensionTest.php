@@ -75,13 +75,11 @@ class IntakeExtensionTest extends TestCase
         $this->assertDatabaseCount('cchia_admissions.applications', 0);
     }
 
-    public function test_strict_natural_member_persists_separate_fields_and_verified_sponsors(): void
+    public function test_internal_sponsor_ids_do_not_bypass_explicit_consent(): void
     {
-        $this->postJson('/api/v1/applications', $this->validData())->assertCreated()->assertJsonPath('data.local_pilot', false);
-        $this->assertDatabaseHas('cchia_admissions.applications', ['natural_given_names' => 'Persona', 'natural_family_names' => 'de prueba',
-            'natural_name' => 'Persona de prueba', 'natural_age' => 30, 'region' => 'La Araucanía', 'commune' => 'Temuco',
-            'address' => 'La Araucanía, Temuco', 'rules_version' => '2026-10-28-member-2']);
-        $this->assertDatabaseCount('cchia_admissions.application_sponsors', 2);
+        $this->postJson('/api/v1/applications', $this->validData())->assertUnprocessable()->assertJsonValidationErrors('sponsors');
+        $this->assertDatabaseCount('cchia_admissions.applications', 0);
+        $this->assertDatabaseCount('cchia_admissions.application_sponsors', 0);
         $this->assertDatabaseCount('public.users', 2);
     }
 
@@ -89,14 +87,14 @@ class IntakeExtensionTest extends TestCase
     {
         $data = $this->validData();
         $data['sponsors'][1] = strtoupper($data['sponsors'][0]);
-        $this->postJson('/api/v1/applications', $data)->assertUnprocessable()->assertJsonValidationErrors('sponsors.0');
+        $this->postJson('/api/v1/applications', $data)->assertUnprocessable()->assertJsonValidationErrors('sponsors');
         $this->assertDatabaseCount('cchia_admissions.applications', 0);
     }
 
     public function test_natural_sponsors_must_have_a_current_membership(): void
     {
         $data = [...$this->data(), 'sponsors' => [$this->account('socio', ['ends_at' => now()])->id, $this->account()->id]];
-        $this->postJson('/api/v1/applications', $data)->assertUnprocessable()->assertJsonValidationErrors('sponsors.0');
+        $this->postJson('/api/v1/applications', $data)->assertUnprocessable()->assertJsonValidationErrors('sponsors');
     }
 
     public function test_age_and_nested_malformed_identity_are_validation_errors(): void

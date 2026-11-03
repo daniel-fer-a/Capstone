@@ -9,6 +9,7 @@ import { usePostulacion } from '../postulacion/postulacionContext'
 type Seguimiento = {
   reference: string; status: string; submitted_at: string; decision_at: string | null
   history: { action: string; label: string; occurred_at: string }[]
+  decision?: { outcome: string; reason: string; meeting_date: string } | null
 }
 
 export default function Seguimiento() {
@@ -55,9 +56,10 @@ export default function Seguimiento() {
       <h2 className="text-2xl font-bold text-navy">{nombreEstado(resultado.status)}</h2>
       <p className="mt-2 break-all font-mono text-sm">{resultado.reference}</p>
       <p className="mt-2 text-sm text-muted">Recibida el {fechaLarga(resultado.submitted_at)}</p>
+      {resultado.decision && <div className="mt-5 space-y-2 border-t border-line pt-4 text-sm"><h3 className="font-bold text-navy">Resolución del Directorio</h3><p>Fecha de la sesión: {resultado.decision.meeting_date}</p><p className="whitespace-pre-wrap break-words">{resultado.decision.reason}</p>{resultado.decision.outcome === 'rejected' && <p>El procedimiento de apelación se canaliza ante el Directorio para su resolución en la próxima Asamblea de socios.</p>}</div>}
       <h3 className="mt-6 font-bold text-navy">Historial de tu solicitud</h3>
       <ol className="mt-3 space-y-3">{resultado.history.map((item, i) => <li key={`${item.action}-${i}`} className="border-l-2 border-teal pl-4 text-sm"><p className="font-semibold">{item.label}</p><p className="text-xs text-muted">{fechaLarga(item.occurred_at)}</p></li>)}</ol>
-      <div className="mt-5"><Aviso>La recepción y el inicio de la revisión no otorgan membresía automática. Conserva tu comprobante mientras se resuelve la solicitud.</Aviso></div>
+      <div className="mt-5"><Aviso>{['approved', 'rejected'].includes(resultado.status) ? 'El resultado corresponde al acuerdo registrado. Conserva tu comprobante para las gestiones posteriores que correspondan.' : 'La recepción y el inicio de la revisión no otorgan membresía automática. Conserva tu comprobante mientras se resuelve la solicitud.'}</Aviso></div>
     </section>}
   </Pagina>
 }

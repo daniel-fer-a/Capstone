@@ -45,6 +45,9 @@ class SessionController extends Controller
             'can_review' => $access->reviewerHasPermission($user->id, 'admissions.read'),
             'can_start_review' => $access->reviewerHasPermission($user->id, 'admissions.read')
                 && $access->reviewerHasPermission($user->id, 'admissions.review.start'),
+            'can_sponsor' => $access->effectiveGlobalAssignments($user->id, now())->where('ra.role_code', 'socio')->exists(),
+            'can_record_decision' => $access->reviewerHasPermission($user->id, 'admissions.read')
+                && $access->reviewerHasPermission($user->id, 'admissions.decisions.record'),
         ]])->header('Cache-Control', 'no-store');
     }
 

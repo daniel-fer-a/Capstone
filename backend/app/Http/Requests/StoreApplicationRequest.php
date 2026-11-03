@@ -18,6 +18,9 @@ class StoreApplicationRequest extends FormRequest
         if (is_string($this->input('email'))) {
             $this->merge(['email' => mb_strtolower(trim($this->input('email')))]);
         }
+        if (is_array($this->input('sponsors'))) {
+            $this->merge(['sponsors' => array_map(fn ($id) => is_string($id) ? strtolower($id) : $id, $this->input('sponsors'))]);
+        }
         foreach (['givenNames', 'familyNames', 'region', 'commune'] as $field) {
             if (is_string($this->input($field))) {
                 $this->merge([$field => trim($this->input($field))]);
@@ -59,7 +62,7 @@ class StoreApplicationRequest extends FormRequest
             'aiActivity' => ['required', 'string', 'max:10000'],
             'declaration_accepted' => ['required', 'accepted'],
             'sponsors' => [Rule::requiredIf($sponsorsRequired), Rule::prohibitedIf(!$sponsorsAllowed), 'array', 'list', 'size:2'],
-            'sponsors.*' => ['required', 'uuid', 'distinct:ignore_case'],
+            'sponsors.*' => ['bail', 'required', 'uuid', 'distinct:strict'],
             'documents' => ['sometimes', 'array:vigencia,personeria,estatutos,antecedentes', 'max:4'],
             'documents.vigencia' => [Rule::requiredIf($juridica), Rule::prohibitedIf(!$juridica), ...$file],
             'documents.personeria' => [Rule::requiredIf($juridica), Rule::prohibitedIf(!$juridica), ...$file],
@@ -86,6 +89,9 @@ class StoreApplicationRequest extends FormRequest
             }
             if (!config('admissions.require_member_sponsors') && !app()->environment(['local', 'testing'])) {
                 $validator->errors()->add('sponsors', 'El envío sin patrocinios solo está disponible en pruebas locales.');
+            }
+            if ($this->input('membership') === 'member' && config('admissions.require_member_sponsors')) {
+                $validator->errors()->add('sponsors', 'Inicia la etapa privada de patrocinios y continúa desde ella. Los identificadores de socios no acreditan su aceptación.');
             }
             if ($this->input('membership') === 'collaborator' && $this->input('legal') === 'juridica'
                 && !config('admissions.collaborator_legal_enabled')) {

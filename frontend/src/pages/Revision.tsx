@@ -92,7 +92,7 @@ export default function Revision() {
     <Pagina migas="Postulación / Revisión" etiqueta="Antes de enviar" titulo="Revisa tu postulación"
       bajada="Comprueba los datos y antecedentes. Puedes volver a corregirlos antes de confirmar el envío.">
       <div className="flex min-w-0 flex-col gap-6 md:flex-row">
-        <Pasos actual={3} />
+        <Pasos actual={3} piloto />
         <section className="min-w-0 flex-1 rounded-xl border border-line bg-white p-5 sm:p-6" aria-busy={enviando}>
           <div className="flex flex-wrap items-baseline justify-between gap-3">
             <h2 className="text-xl font-bold text-navy">Resumen de tu solicitud</h2>

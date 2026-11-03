@@ -16,7 +16,7 @@ class RegisterApplication
 {
     public function __construct(private readonly Model02Access $access) {}
 
-    public function register(array $data, array $documents, ?string $submissionKey = null): array
+    public function register(array $data, array $documents, ?string $submissionKey = null, ?array $intake = null): array
     {
         $written = [];
         $disk = Storage::disk(config('admissions.disk'));
@@ -28,7 +28,7 @@ class RegisterApplication
         $replayed = false;
 
         try {
-            $application = DB::transaction(function () use ($data, $documents, $disk, $token, $submittedAt, $keyHash, $fingerprint, &$written, &$recoveredToken, &$replayed) {
+            $application = DB::transaction(function () use ($data, $documents, $disk, $token, $submittedAt, $keyHash, $fingerprint, $intake, &$written, &$recoveredToken, &$replayed) {
                 if ($keyHash !== null) {
                     DB::select('SELECT pg_advisory_xact_lock(?)', [(int) hexdec(substr($keyHash, 0, 15))]);
                     $previous = DB::table('cchia_admissions.application_submissions')->where('key_hash', $keyHash)->first();
@@ -45,7 +45,7 @@ class RegisterApplication
                         return AdmissionApplication::query()->findOrFail($previous->application_id);
                     }
                 }
-                $sponsors = [];
+                $sponsors = $intake['sponsors'] ?? [];
                 if (!empty($data['sponsors'])) {
                     foreach ($data['sponsors'] as $position => $userId) {
                         $userId = strtolower($userId);
@@ -63,9 +63,11 @@ class RegisterApplication
                 }
 
                 $natural = $data['legal'] === 'natural';
-                $rulesVersion = $natural && $data['membership'] === 'member' && !config('admissions.require_member_sponsors')
-                    ? config('admissions.pilot_rules_version') : config('admissions.rules_version');
+                $rulesVersion = $intake !== null ? config('admissions.staged_rules_version')
+                    : ($natural && $data['membership'] === 'member' && !config('admissions.require_member_sponsors')
+                    ? config('admissions.pilot_rules_version') : config('admissions.rules_version'));
                 $application = AdmissionApplication::query()->create([
+                    'intake_id' => $intake['intake_id'] ?? null,
                     'reference' => 'CCHIA-'.Str::ulid(),
                     'tracking_token_hash' => hash('sha256', $token),
                     'membership' => $data['membership'], 'legal' => $data['legal'],
@@ -120,6 +122,14 @@ class RegisterApplication
                         'encrypted_tracking_token' => Crypt::encryptString($token),
                         'created_at' => $submittedAt,
                         'recoverable_until' => $submittedAt->copy()->addDay(),
+                    ]);
+                }
+                if ($intake !== null) {
+                    NotificationOutbox::enqueue('application_received', $application->id);
+                    DB::table('cchia_admissions.intake_events')->insert([
+                        'id' => (string) Str::uuid(), 'intake_id' => $intake['intake_id'],
+                        'actor_kind' => 'applicant', 'action' => 'intake.submitted',
+                        'metadata' => json_encode(['application_id' => $application->id], JSON_THROW_ON_ERROR), 'occurred_at' => $submittedAt,
                     ]);
                 }
                 DB::statement('SET CONSTRAINTS ALL IMMEDIATE');

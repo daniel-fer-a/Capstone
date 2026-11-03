@@ -3,6 +3,7 @@ import type { DatosNatural, Comprobante } from '../postulacion/postulacionContex
 export type CampoFormulario =
   | 'nombres' | 'apellidos' | 'edad' | 'identificacion' | 'correo'
   | 'region' | 'comuna' | 'actividad' | 'respaldo' | 'confirmacion' | 'patrocinios'
+  | 'razonSocial' | 'rutOrganizacion' | 'representante' | 'rutRepresentante' | 'estatutos' | 'vigencia'
 
 export class ApiError extends Error {
   status: number
@@ -33,6 +34,14 @@ const CAMPOS_API: Record<string, [CampoFormulario, string]> = {
   aiActivity: ['actividad', 'Revisa la descripción de tu actividad.'],
   declaration_accepted: ['confirmacion', 'Confirma que revisaste los datos de la postulación.'],
   sponsors: ['patrocinios', 'Se requieren dos patrocinios válidos de socios distintos.'],
+  sponsorEmails: ['patrocinios', 'Indica dos correos válidos, distintos entre sí y diferentes del tuyo.'],
+  sharing_accepted: ['confirmacion', 'Autoriza compartir los antecedentes indicados con los socios invitados.'],
+  organizationName: ['razonSocial', 'Revisa la razón social.'],
+  organizationId: ['rutOrganizacion', 'Revisa el RUT de la organización.'],
+  representativeName: ['representante', 'Revisa el nombre completo del representante.'],
+  representativeId: ['rutRepresentante', 'Revisa el RUT del representante.'],
+  'documents.estatutos': ['estatutos', 'Adjunta los estatutos en PDF, JPG o PNG de hasta 5 MB.'],
+  'documents.vigencia': ['vigencia', 'Adjunta la vigencia en PDF, JPG o PNG de hasta 5 MB.'],
   'documents.antecedentes': ['respaldo', 'El archivo debe ser PDF, JPG o PNG de hasta 5 MB.'],
 }
 
@@ -66,7 +75,7 @@ export async function solicitudJson(ruta: string, opciones: RequestInit = {}, es
       const campos: Partial<Record<CampoFormulario, string>> = {}
       const errores = esObjeto(cuerpo) && esObjeto(cuerpo.errors) ? cuerpo.errors : {}
       for (const clave of Object.keys(errores)) {
-        const destino = CAMPOS_API[clave] ?? (clave.startsWith('sponsors.') ? CAMPOS_API.sponsors : undefined)
+        const destino = CAMPOS_API[clave] ?? (clave.startsWith('sponsors.') ? CAMPOS_API.sponsors : clave.startsWith('sponsorEmails.') ? CAMPOS_API.sponsorEmails : undefined)
         if (destino) campos[destino[0]] = destino[1]
       }
       throw new ApiError(422, 'Revisa los datos e inténtalo nuevamente.', campos)
@@ -94,6 +103,8 @@ export async function solicitudJson(ruta: string, opciones: RequestInit = {}, es
 export type CapacidadIngreso = {
   natural_submission_enabled: boolean
   local_pilot: boolean
+  sponsor_channel_available?: boolean
+  juridical_submission_enabled?: boolean
 }
 
 export async function capacidadIngreso(): Promise<CapacidadIngreso> {
@@ -121,6 +132,10 @@ export async function enviarPostulacionNatural(datos: DatosNatural, respaldo: Fi
   const cuerpo = await solicitudJson('/api/v1/applications', {
     method: 'POST', credentials: 'omit', headers: { 'Idempotency-Key': clave }, body: form,
   }, 201)
+  return leerComprobante(cuerpo)
+}
+
+export function leerComprobante(cuerpo: unknown): Comprobante {
   const d = esObjeto(cuerpo) && esObjeto(cuerpo.data) ? cuerpo.data : null
   if (!d || typeof d.id !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(d.id)
     || typeof d.reference !== 'string' || !/^CCHIA-[A-Z0-9-]{1,34}$/.test(d.reference)

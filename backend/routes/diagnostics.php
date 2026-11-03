@@ -18,7 +18,9 @@ Artisan::command('admissions:diagnose', function (): int {
             return 1;
         }
         $complete = true;
-        foreach (['public.users', 'cchia_m02.role_assignments', 'cchia_admissions.applications', 'cchia_admissions.application_submissions'] as $table) {
+        foreach (['public.users', 'cchia_m02.role_assignments', 'cchia_admissions.applications', 'cchia_admissions.application_submissions',
+            'cchia_admissions.intake_requests', 'cchia_admissions.sponsor_invitations', 'cchia_admissions.intake_events',
+            'cchia_admissions.notification_outbox', 'cchia_admissions.board_resolutions'] as $table) {
             $present = DB::scalar('SELECT to_regclass(?)', [$table]) !== null;
             $this->line($table.': '.($present ? 'presente' : 'pendiente de migración'));
             $complete = $complete && $present;
@@ -38,12 +40,15 @@ Artisan::command('admissions:purge-submission-secrets', function (): int {
     $count = DB::table('cchia_admissions.application_submissions')
         ->where('recoverable_until', '<=', now())->where('encrypted_tracking_token', '<>', '')
         ->update(['encrypted_tracking_token' => '']);
+    $intakes = DB::table('cchia_admissions.intake_requests')->where('recovery_until', '<=', now())
+        ->where('encrypted_access_token', '<>', '')->update(['encrypted_access_token' => '']);
     $this->info('Secretos de recuperación vencidos eliminados: '.$count);
+    $this->info('Copias cifradas de acceso inicial eliminadas: '.$intakes);
 
     return 0;
 })->purpose('Elimina el contenido cifrado vencido y conserva la protección contra duplicados.');
 
-Artisan::command('admissions:local-user {email} {--name=Usuario de pruebas} {--reviewer}', function (): int {
+Artisan::command('admissions:local-user {email} {--name=Usuario de pruebas} {--reviewer} {--sponsor}', function (): int {
     if (!app()->environment(['local', 'testing'])) {
         $this->error('Este comando solo está disponible en un entorno local o de pruebas.');
         return 1;
@@ -70,7 +75,7 @@ Artisan::command('admissions:local-user {email} {--name=Usuario de pruebas} {--r
             if (!$scope) {
                 throw new RuntimeException('Falta el ámbito global de pruebas.');
             }
-            foreach (['admissions.read', 'admissions.documents.read', 'admissions.review.start'] as $permission) {
+            foreach (['admissions.read', 'admissions.documents.read', 'admissions.review.start', 'admissions.decisions.record'] as $permission) {
                 DB::table('cchia_m02.role_permissions')->insertOrIgnore(['role_code' => 'directorio', 'permission_code' => $permission]);
             }
             DB::table('cchia_m02.role_assignments')->insert([
@@ -79,13 +84,40 @@ Artisan::command('admissions:local-user {email} {--name=Usuario de pruebas} {--r
                 'starts_at' => now(), 'accepted_at' => now(),
             ]);
         }
+        if ($this->option('sponsor')) {
+            $scope = DB::table('cchia_m02.access_scopes')->where('kind', 'global')->value('id');
+            if (!$scope) throw new RuntimeException('Falta el ámbito global de pruebas.');
+            DB::table('cchia_m02.role_assignments')->insert([
+                'id' => (string) Illuminate\Support\Str::uuid(), 'user_id' => $user->id,
+                'role_code' => 'socio', 'scope_id' => $scope, 'status' => 'active',
+                'starts_at' => now(), 'accepted_at' => now(),
+            ]);
+        }
         DB::table('cchia_m02.authorization_audit_log')->insert([
             'id' => (string) Illuminate\Support\Str::uuid(), 'subject_user_id' => $user->id,
             'action' => 'development.local_user_created', 'entity_type' => 'user', 'entity_id' => $user->id,
-            'metadata' => json_encode(['reviewer' => (bool) $this->option('reviewer')], JSON_THROW_ON_ERROR), 'occurred_at' => now(),
+            'metadata' => json_encode(['reviewer' => (bool) $this->option('reviewer'), 'sponsor' => (bool) $this->option('sponsor')], JSON_THROW_ON_ERROR), 'occurred_at' => now(),
         ]);
     });
     $this->info('Cuenta local creada. No cambia la habilitación de la revisión institucional.');
 
     return 0;
 })->purpose('Crea explícitamente una cuenta de prueba local, sin contraseñas predeterminadas.');
+
+Artisan::command('admissions:send-notifications {--limit=25}', function (): int {
+    $result = app(App\Services\NotificationOutbox::class)->process((int) $this->option('limit'));
+    $this->info('Procesadas: '.$result['sent'].'; pendientes de reintento: '.$result['failed'].'; omitidas o agotadas: '.$result['abandoned']);
+    return $result['failed'] > 0 ? 1 : 0;
+})->purpose('Procesa avisos comprometidos en la base, sin incluir códigos privados de seguimiento.');
+
+Illuminate\Support\Facades\Schedule::command('admissions:send-notifications --limit=25')->everyMinute()->withoutOverlapping(5);
+Illuminate\Support\Facades\Schedule::command('admissions:purge-submission-secrets')->hourly()->withoutOverlapping();
+
+Artisan::command('admissions:notifications-status', function (): int {
+    $table = DB::table('cchia_admissions.notification_outbox');
+    $this->line('Procesadas por el transporte configurado: '.(clone $table)->whereNotNull('sent_at')->count());
+    $this->line('Pendientes o en reintento: '.(clone $table)->whereNull('sent_at')->whereNull('abandoned_at')->count());
+    $this->line('Omitidas o con intentos agotados: '.(clone $table)->whereNotNull('abandoned_at')->count());
+    $this->line('Transporte: '.config('mail.default').'; log y array no entregan correos reales.');
+    return 0;
+})->purpose('Resume el procesamiento de avisos sin mostrar destinatarios ni códigos privados.');

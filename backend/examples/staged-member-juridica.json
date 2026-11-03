@@ -1,0 +1,15 @@
+{
+  "membership": "member",
+  "legal": "juridica",
+  "organizationName": "Organización Ficticia",
+  "organizationId": "RUT-FICTICIO-ORGANIZACION",
+  "representativeName": "Representante Ficticia",
+  "representativeId": "RUT-FICTICIO-REPRESENTANTE",
+  "email": "organizacion@example.test",
+  "region": "La Araucanía",
+  "commune": "Temuco",
+  "aiActivity": "Desarrollo ficticio de sistemas de inteligencia artificial.",
+  "sponsorEmails": ["socio.uno@example.test", "socio.dos@example.test"],
+  "declaration_accepted": true,
+  "sharing_accepted": true
+}

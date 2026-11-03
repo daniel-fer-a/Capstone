@@ -1,18 +1,21 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { Aviso, Pagina } from '../components/ui'
 import { botonPrimario, botonSecundario, inputCls } from '../components/estilos'
 import { ApiError, esObjeto } from '../lib/api'
 import { peticionPrivada, leerSesion, type Sesion } from '../lib/httpPrivado'
 import { fechaLarga } from '../lib/formato'
 import { nombreEstado, ESTADOS } from '../lib/estados'
+import RegistrarResolucion from '../components/RegistrarResolucion'
 
 type Ficha = { id: string; reference: string; status: string; legal: string; submitted_at: string; rules_version: string }
 type Detalle = Ficha & {
   natural_name: string | null; natural_age: number | null; organization_name: string | null; email: string
   address: string; ai_activity: string
   documents: { id: string; original_name: string }[]
-  sponsors: { id: string }[]
+  sponsors: { id: string; position: number; confirmed_at: string | null; user: { name: string } | null }[]
+  representative_name: string | null; representative_identifier: string | null; organization_identifier: string | null
+  resolution: { outcome: string; reason: string; meeting_date: string; minutes_reference: string; recorded_at: string } | null
   events: { id: string; action: string; actor_user_id: string | null; actor: { name: string } | null; occurred_at: string }[]
 }
 
@@ -38,7 +41,8 @@ export default function AreaPrivada() {
     {!sesion && !error && <p role="status">Comprobando sesión…</p>}
     {sesion && <>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-white p-4"><p className="text-sm">Sesión de <strong>{sesion.name}</strong></p><button disabled={saliendo} className={botonSecundario} onClick={salir}>{saliendo ? 'Cerrando…' : 'Cerrar sesión'}</button></div>
-      {sesion.can_review ? <Bandeja sesion={sesion} /> : <Aviso>Tu cuenta está identificada. No tienes habilitado el acceso a la revisión institucional de postulaciones.</Aviso>}
+      {sesion.can_sponsor && <Link className={`${botonPrimario} mb-6`} to="/area/patrocinios">Ver solicitudes de patrocinio →</Link>}
+      {sesion.can_review ? <Bandeja sesion={sesion} /> : <Aviso>{sesion.can_sponsor ? 'Puedes revisar y responder tus solicitudes de patrocinio desde el acceso anterior.' : 'Tu cuenta está identificada. Las funciones disponibles dependen de tus asignaciones vigentes.'}</Aviso>}
     </>}
   </Pagina>
 }
@@ -93,14 +97,19 @@ function Bandeja({ sesion }: { sesion: Sesion }) {
     {detalle && <section className="min-w-0 rounded-xl border border-line bg-white p-5 sm:p-6">
       <h2 className="text-2xl font-bold text-navy">Expediente de postulación</h2><p className="mt-2 break-all font-mono text-sm">{detalle.reference}</p><p className="mt-2 font-bold">{nombreEstado(detalle.status)}</p>
       <dl className="mt-5 space-y-3 text-sm">{[
-        ['Postulante', detalle.natural_name ?? detalle.organization_name], ['Edad', detalle.natural_age === null ? 'Sin dato registrado' : String(detalle.natural_age)],
+        ['Postulante', detalle.natural_name ?? detalle.organization_name],
+        ...(detalle.legal === 'natural' ? [['Edad', detalle.natural_age === null ? 'Sin dato registrado' : String(detalle.natural_age)]] : []),
+        ...(detalle.legal === 'juridica' ? [['RUT de la organización', detalle.organization_identifier], ['Representante', detalle.representative_name], ['RUT del representante', detalle.representative_identifier]] : []),
         ['Correo', detalle.email], ['Región y comuna', detalle.address], ['Actividad IA', detalle.ai_activity],
         ['Patrocinios registrados', String(detalle.sponsors.length)],
       ].map(([k,v]) => <div key={k}><dt className="text-xs text-muted">{k}</dt><dd className="whitespace-pre-wrap">{v}</dd></div>)}</dl>
       {detalle.rules_version === '2026-10-28-pilot-2' && <div className="mt-5"><Aviso tipo="warn">Este expediente corresponde a una prueba local y no acredita los patrocinios requeridos para el ingreso institucional.</Aviso></div>}
       <h3 className="mt-5 font-bold text-navy">Documentos privados</h3><ul className="mt-2 space-y-2 text-sm">{detalle.documents.length ? detalle.documents.map((doc) => <li key={doc.id}><a className="break-all text-navy underline" href={`/api/v1/admin/applications/${detalle.id}/documents/${doc.id}`}>{doc.original_name}</a></li>) : <li>Sin archivos adjuntos.</li>}</ul>
-      <h3 className="mt-5 font-bold text-navy">Trazabilidad</h3><ol className="mt-2 space-y-2 text-sm">{detalle.events.map((ev) => <li key={ev.id}>{ev.action === 'application.review_started' ? `Revisión iniciada por ${ev.actor?.name ?? 'el Directorio'}` : ev.action === 'application.submitted' ? 'Solicitud recibida' : 'Evento del expediente'} · {fechaLarga(ev.occurred_at)}</li>)}</ol>
+      <h3 className="mt-5 font-bold text-navy">Constancias de patrocinio</h3><ul className="mt-2 space-y-2 text-sm">{detalle.sponsors.map(s => <li key={s.id}>Socio {s.position}: {s.user?.name ?? 'Socio registrado'} · {s.confirmed_at ? `Confirmación del ${fechaLarga(s.confirmed_at)}` : 'Registro histórico de elegibilidad; no incluye confirmación en este flujo.'}</li>)}</ul>
+      <h3 className="mt-5 font-bold text-navy">Trazabilidad</h3><ol className="mt-2 space-y-2 text-sm">{detalle.events.map((ev) => <li key={ev.id}>{ev.action === 'application.review_started' ? `Revisión iniciada por ${ev.actor?.name ?? 'el Directorio'}` : ev.action === 'application.submitted' ? 'Solicitud recibida' : ev.action === 'application.decision_recorded' ? `Resolución registrada por ${ev.actor?.name ?? 'una persona autorizada'}` : 'Evento del expediente'} · {fechaLarga(ev.occurred_at)}</li>)}</ol>
       {detalle.status === 'received' && sesion.can_start_review && <button disabled={accion} onClick={iniciar} className={`${botonPrimario} mt-6`}>{accion ? 'Iniciando…' : 'Iniciar revisión'}</button>}
+      {detalle.resolution && <div className="mt-6 space-y-2 border-t border-line pt-5 text-sm"><h3 className="font-bold text-navy">Resolución registrada</h3><p>{nombreEstado(detalle.resolution.outcome)} · Sesión: {detalle.resolution.meeting_date.slice(0, 10)}</p><p className="break-words">Referencia: {detalle.resolution.minutes_reference}</p><p className="whitespace-pre-wrap break-words">{detalle.resolution.reason}</p></div>}
+      {detalle.status === 'under_review' && sesion.can_record_decision && detalle.rules_version !== '2026-10-28-pilot-2' && <RegistrarResolucion key={detalle.id} id={detalle.id} alRegistrar={async () => { await abrir(detalle.id); setRecarga(v => v + 1) }} />}
     </section>}
   </>
 }

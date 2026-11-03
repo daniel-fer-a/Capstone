@@ -1,10 +1,10 @@
-const PASOS = ['Tus datos', 'Antecedentes', 'Revisar y enviar', 'Comprobante']
+const PASOS = ['Tus datos', 'Patrocinios', 'Documentos', 'Revisar y enviar', 'Comprobante']
 
-export default function Pasos({ actual }: { actual: 1 | 2 | 3 | 4 }) {
+export default function Pasos({ actual, piloto = false }: { actual: 1 | 2 | 3 | 4 | 5; piloto?: boolean }) {
   return (
     <aside className="md:w-56 md:shrink-0">
       <ol aria-label="Pasos de la postulación" className="space-y-1">
-        {PASOS.map((nombre, i) => {
+        {(piloto ? ['Tus datos', 'Antecedentes', 'Revisar y enviar', 'Comprobante'] : PASOS).map((nombre, i) => {
           const n = i + 1
           const hecho = n < actual
           const activo = n === actual
