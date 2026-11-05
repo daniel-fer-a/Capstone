@@ -1,0 +1,11 @@
+{
+  "prepared_date": "2026-11-03",
+  "started_date": "2026-11-02",
+  "timezone": "America/Santiago",
+  "source_archive": "CCHIA_Cierre_Postulaciones_QA_01_noviembre.zip",
+  "source_sha256": "4b1ee558e93aa133dcfec7cca8cdc9ee2f596a9da371022c21b09efaba37f538",
+  "scope": "postulaciones, registro privado, avisos y preparación operativa",
+  "docker_qa_status": "prepared_not_executed",
+  "expected_backend_tests": 118,
+  "expected_frontend_tests": 24
+}

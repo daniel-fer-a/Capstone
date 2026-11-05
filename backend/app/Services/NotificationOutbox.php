@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Mail\ApplicationReceived;
+use App\Mail\AdmissionUpdate;
 use App\Mail\SponsorshipInvitation;
 use App\Models\AdmissionApplication;
 use App\Models\SponsorInvitation;
@@ -13,6 +14,14 @@ use Illuminate\Support\Str;
 
 class NotificationOutbox
 {
+    public static function enqueueEvent(string $applicationId, string $eventId): void
+    {
+        DB::table('cchia_admissions.notification_outbox')->insertOrIgnore([
+            'id' => (string) Str::uuid(), 'kind' => 'application_event', 'deduplication_key' => 'application_event:'.$eventId,
+            'application_id' => $applicationId, 'event_id' => $eventId, 'created_at' => now(), 'available_at' => now(),
+        ]);
+    }
+
     public static function enqueue(string $kind, string $entityId): void
     {
         DB::table('cchia_admissions.notification_outbox')->insertOrIgnore([
@@ -57,6 +66,12 @@ class NotificationOutbox
 
     private function deliver(object $row): bool
     {
+        if ($row->kind === 'application_event') {
+            $application = AdmissionApplication::query()->findOrFail($row->application_id);
+            $event = $application->events()->where('id', $row->event_id)->firstOrFail();
+            Mail::to($application->email)->send(new AdmissionUpdate($application->reference, $event->action));
+            return true;
+        }
         if ($row->kind === 'application_received') {
             $application = AdmissionApplication::query()->findOrFail($row->application_id);
             Mail::to($application->email)->send(new ApplicationReceived($application));

@@ -1,0 +1,17 @@
+**/.env
+**/.env.*
+**/.git
+**/vendor
+**/node_modules
+**/dist
+**/storage
+**/bootstrap/cache
+**/.phpunit.result.cache
+**/*.dump
+**/*.sql.gz
+**/backups
+operacion/private
+outputs
+tmp
+work
+upload

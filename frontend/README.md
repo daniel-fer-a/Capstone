@@ -45,3 +45,14 @@ Los avisos de invitación y recepción se procesan en el backend. La interfaz no
 Las marcas provienen del Manual de Normas Gráficas CCHIA, marzo de 2026. Se conservó la marca principal aportada por Fabián y se añadió la variante secundaria oficial para pantallas pequeñas. Colores digitales: azul `#003764` y turquesa `#008996`.
 
 La guía de incorporación y validación del paquete explica las variables, migración, cuentas de pruebas y controles nativos. El envío de postulación no crea una cuenta ni concede membresía.
+
+## Continuidad del 1 de noviembre
+
+Seguimiento permite responder subsanaciones y solicitar la apelación inicial con el folio formal y código privado. El área institucional conserva documentos y versiones, registra el acuerdo posterior de la Asamblea y permite un registro expreso de ingreso si está habilitado y autorizado. La bandeja muestra el avance actual y permite filtrar gestiones pendientes. La aprobación y el registro no crean cuentas ni asignan roles. Los anexos V4 del paquete describen rutas, permisos y pruebas.
+
+## Incremento consolidado el 3 de noviembre
+
+- `/area/socios`: registro privado de ingresos formalizados, búsqueda, modalidad, paginación y ficha. Exportar CSV requiere otro permiso además de lectura.
+- `/area/avisos`: estado de la cola sin destinatarios ni contenido privado. La reactivación de un error agotado exige motivo y confirmación, y conserva la misma clave cuando se recupera una respuesta incierta.
+
+Los enlaces se muestran según las capacidades de la sesión; la API vuelve a verificar los permisos efectivos. Procesado por el transporte no significa recibido por el destinatario. La suite del frontend contiene 24 casos. Desde la raíz `proyecto`, `node operacion/frontend_evidence.mjs` registra pruebas, análisis y compilación contra el manifiesto de esta versión.

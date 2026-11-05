@@ -63,7 +63,7 @@ class IntakeController extends Controller
             $existing = $intake->application()->first();
             $sponsors = $existing ? [] : $service->confirmedSponsors($intake);
             $juridica = $intake->legal === 'juridica';
-            $file = ['file', 'mimetypes:application/pdf,image/jpeg,image/png', 'extensions:pdf,jpg,jpeg,png', 'max:'.config('admissions.max_file_kb')];
+            $file = [new \App\Rules\AdmissionDocument(), 'file', 'mimetypes:application/pdf,image/jpeg,image/png', 'extensions:pdf,jpg,jpeg,png', 'max:'.config('admissions.max_file_kb')];
             $request->validate([
                 'declaration_accepted' => ['required', 'accepted'],
                 'documents' => ['sometimes', $juridica ? 'array:estatutos,vigencia' : 'array:antecedentes'],

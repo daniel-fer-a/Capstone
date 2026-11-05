@@ -1,0 +1,85 @@
+name: cchia-qa-isolated
+x-app: &app
+  build:
+    context: ..
+    dockerfile: operacion/Dockerfile.runtime
+    target: qa
+  env_file: ${CCHIA_QA_ENV_PATH:-./private/qa.env}
+  environment:
+    APP_URL: http://localhost:${QA_PORT:-8088}
+    FRONTEND_URL: http://localhost:${QA_PORT:-8088}
+    SANCTUM_STATEFUL_DOMAINS: localhost:${QA_PORT:-8088},127.0.0.1:${QA_PORT:-8088}
+  restart: unless-stopped
+  depends_on:
+    db:
+      condition: service_healthy
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: cchia_qa
+      POSTGRES_USER: cchia_qa
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Generar primero operacion/private/qa.env}
+    volumes:
+      - database:/var/lib/postgresql
+      - ./container/init-test-db.sh:/docker-entrypoint-initdb.d/01-test.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cchia_qa -d cchia_qa"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+  php:
+    <<: *app
+    volumes:
+      - runtime:/app/storage
+      - bootstrap:/app/bootstrap/cache
+  scheduler:
+    <<: *app
+    command: ["cchia-scheduler"]
+    volumes:
+      - runtime:/app/storage
+      - bootstrap:/app/bootstrap/cache
+    healthcheck:
+      test: ["CMD", "php", "artisan", "cchia:ops", "heartbeat-status", "--json"]
+      interval: 60s
+      timeout: 15s
+      start_period: 90s
+      retries: 3
+    profiles: ["operation"]
+  web:
+    build:
+      context: ..
+      dockerfile: operacion/Dockerfile.runtime
+      target: web
+    ports:
+      - "127.0.0.1:${QA_PORT:-8088}:80"
+    depends_on:
+      - php
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/up"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  tests:
+    <<: *app
+    restart: "no"
+    environment:
+      APP_ENV: testing
+      DB_DATABASE: cchia_qa_test
+      DB_URL: ""
+      CACHE_STORE: array
+      SESSION_DRIVER: array
+      MAIL_MAILER: array
+    command: ["sh", "-c", "php artisan migrate --force && php vendor/bin/phpunit --colors=never --log-junit storage/logs/qa.xml"]
+    volumes:
+      - test_runtime:/app/storage
+      - test_bootstrap:/app/bootstrap/cache
+    profiles: ["tests"]
+volumes:
+  database:
+  runtime:
+  bootstrap:
+  test_runtime:
+  test_bootstrap:

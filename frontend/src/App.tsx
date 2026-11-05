@@ -13,6 +13,8 @@ import Acceso from './pages/Acceso'
 import Recuperar from './pages/Recuperar'
 import Restablecer from './pages/Restablecer'
 import AreaPrivada from './pages/AreaPrivada'
+import RegistroSocios from './pages/RegistroSocios'
+import GestionAvisos from './pages/GestionAvisos'
 import RouteFocus from './components/RouteFocus'
 import DatosJuridica from './pages/DatosJuridica'
 import Patrocinios from './pages/Patrocinios'
@@ -44,6 +46,8 @@ export default function App() {
           <Route path="recuperar" element={<Recuperar />} />
           <Route path="restablecer" element={<Restablecer />} />
           <Route path="area" element={<AreaPrivada />} />
+          <Route path="area/socios" element={<RegistroSocios />} />
+          <Route path="area/avisos" element={<GestionAvisos />} />
           <Route path="*" element={<Pendiente titulo="Página no encontrada" detalle="La dirección no existe." />} />
         </Route>
       </Routes>

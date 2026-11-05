@@ -20,7 +20,9 @@ Artisan::command('admissions:diagnose', function (): int {
         $complete = true;
         foreach (['public.users', 'cchia_m02.role_assignments', 'cchia_admissions.applications', 'cchia_admissions.application_submissions',
             'cchia_admissions.intake_requests', 'cchia_admissions.sponsor_invitations', 'cchia_admissions.intake_events',
-            'cchia_admissions.notification_outbox', 'cchia_admissions.board_resolutions'] as $table) {
+            'cchia_admissions.notification_outbox', 'cchia_admissions.board_resolutions',
+            'cchia_admissions.appeals', 'cchia_admissions.assembly_resolutions', 'cchia_admissions.correction_requests',
+            'cchia_admissions.correction_submissions', 'cchia_admissions.document_revisions', 'cchia_admissions.correction_reviews', 'cchia_admissions.membership_registrations', 'cchia_admissions.notification_retries'] as $table) {
             $present = DB::scalar('SELECT to_regclass(?)', [$table]) !== null;
             $this->line($table.': '.($present ? 'presente' : 'pendiente de migración'));
             $complete = $complete && $present;
@@ -75,7 +77,7 @@ Artisan::command('admissions:local-user {email} {--name=Usuario de pruebas} {--r
             if (!$scope) {
                 throw new RuntimeException('Falta el ámbito global de pruebas.');
             }
-            foreach (['admissions.read', 'admissions.documents.read', 'admissions.review.start', 'admissions.decisions.record'] as $permission) {
+            foreach (['admissions.read', 'admissions.documents.read', 'admissions.review.start', 'admissions.decisions.record', 'admissions.corrections.manage', 'admissions.appeals.record', 'admissions.membership.formalize', 'admissions.membership.read', 'admissions.membership.export', 'admissions.notifications.manage'] as $permission) {
                 DB::table('cchia_m02.role_permissions')->insertOrIgnore(['role_code' => 'directorio', 'permission_code' => $permission]);
             }
             DB::table('cchia_m02.role_assignments')->insert([
@@ -112,6 +114,7 @@ Artisan::command('admissions:send-notifications {--limit=25}', function (): int 
 
 Illuminate\Support\Facades\Schedule::command('admissions:send-notifications --limit=25')->everyMinute()->withoutOverlapping(5);
 Illuminate\Support\Facades\Schedule::command('admissions:purge-submission-secrets')->hourly()->withoutOverlapping();
+Illuminate\Support\Facades\Schedule::command('cchia:ops heartbeat --json')->everyMinute()->withoutOverlapping(2);
 
 Artisan::command('admissions:notifications-status', function (): int {
     $table = DB::table('cchia_admissions.notification_outbox');
@@ -121,3 +124,33 @@ Artisan::command('admissions:notifications-status', function (): int {
     $this->line('Transporte: '.config('mail.default').'; log y array no entregan correos reales.');
     return 0;
 })->purpose('Resume el procesamiento de avisos sin mostrar destinatarios ni códigos privados.');
+
+Artisan::command('admissions:local-review-permissions {email}', function (): int {
+    if (!app()->environment(['local', 'testing'])) {
+        $this->error('Solo se permite en local o testing.');
+        return 1;
+    }
+    $email = mb_strtolower(trim($this->argument('email')));
+    $user = App\Models\User::query()->where('email', $email)->first();
+    if (!$user || !app(App\Services\Model02Access::class)->effectiveGlobalAssignments($user->id, now())->where('ra.role_code', 'directorio')->exists()) {
+        $this->error('La cuenta debe tener una asignación global vigente de Directorio.');
+        return 1;
+    }
+    DB::transaction(function (): void {
+        foreach (['admissions.read','admissions.documents.read','admissions.review.start','admissions.decisions.record','admissions.corrections.manage','admissions.appeals.record','admissions.membership.formalize', 'admissions.membership.read', 'admissions.membership.export', 'admissions.notifications.manage'] as $permission) {
+            DB::table('cchia_m02.role_permissions')->insertOrIgnore(['role_code' => 'directorio', 'permission_code' => $permission]);
+        }
+        DB::table('cchia_m02.authorization_audit_log')->insert(['id' => (string) Illuminate\Support\Str::uuid(),
+            'action' => 'development.review_permissions_configured', 'entity_type' => 'role', 'entity_id' => 'directorio',
+            'metadata' => '{}', 'occurred_at' => now()]);
+    });
+    $this->info('Permisos de QA configurados para el rol Directorio del entorno local. No habilita las funciones por sí solo.');
+    return 0;
+})->purpose('Prepara expresamente los permisos de un rol de prueba existente; no se ejecuta en producción.');
+
+Artisan::command('admissions:release-check', function (): int {
+    $checks = app(App\Services\ReleaseReadiness::class)->checks();
+    foreach ($checks as $name => $passed) $this->line(($passed ? 'OK ' : 'PENDIENTE ').$name);
+    $this->line('Estas comprobaciones no sustituyen la aprobación de QA, HTTPS real, restauración de respaldos, correo recibido ni revisión institucional de permisos.');
+    return in_array(false, $checks, true) ? 1 : 0;
+})->purpose('Comprueba configuración mínima de liberación, sin desplegar, escribir datos ni mostrar credenciales.');

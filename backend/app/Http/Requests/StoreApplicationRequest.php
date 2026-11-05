@@ -41,7 +41,7 @@ class StoreApplicationRequest extends FormRequest
         $memberNatural = $natural && $this->input('membership') === 'member';
         $sponsorsAllowed = $juridica || $memberNatural;
         $sponsorsRequired = $juridica || ($memberNatural && config('admissions.require_member_sponsors'));
-        $file = ['file', 'mimetypes:application/pdf,image/jpeg,image/png', 'extensions:pdf,jpg,jpeg,png', 'max:'.config('admissions.max_file_kb')];
+        $file = [new \App\Rules\AdmissionDocument(), 'file', 'mimetypes:application/pdf,image/jpeg,image/png', 'extensions:pdf,jpg,jpeg,png', 'max:'.config('admissions.max_file_kb')];
 
         return [
             'membership' => ['required', Rule::in(['member', 'collaborator'])],

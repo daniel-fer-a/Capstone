@@ -16,6 +16,8 @@ class AdmissionsServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::policy(AdmissionApplication::class, AdmissionApplicationPolicy::class);
+        RateLimiter::for('institutional-exports', fn (Request $request) => Limit::perMinute(2)->by($request->user()?->id ?? $request->ip()));
+        RateLimiter::for('notification-retries', fn (Request $request) => Limit::perMinute(2)->by($request->user()?->id ?? $request->ip()));
         RateLimiter::for('admissions', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
         RateLimiter::for('tracking', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
         RateLimiter::for('intakes', fn (Request $request) => [Limit::perMinute(3)->by($request->ip()), Limit::perHour(20)->by($request->ip())]);

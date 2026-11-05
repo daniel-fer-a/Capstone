@@ -1,6 +1,6 @@
 import { ApiError, esObjeto, solicitudJson } from './api.ts'
 
-export type Sesion = { id: string; name: string; email: string; can_review: boolean; can_start_review: boolean; can_sponsor?: boolean; can_record_decision?: boolean }
+export type Sesion = { id: string; name: string; email: string; can_review: boolean; can_start_review: boolean; can_sponsor?: boolean; can_record_decision?: boolean; can_manage_corrections?: boolean; can_record_appeal?: boolean; can_formalize?: boolean; can_read_members?: boolean; can_export_members?: boolean; can_manage_notifications?: boolean }
 
 async function csrf(): Promise<string> {
   const respuesta = await fetch('/sanctum/csrf-cookie', { credentials: 'same-origin', headers: { Accept: 'application/json' }, cache: 'no-store' })
@@ -10,12 +10,12 @@ async function csrf(): Promise<string> {
   return decodeURIComponent(cookie.slice('XSRF-TOKEN='.length))
 }
 
-export async function peticionPrivada(ruta: string, datos?: unknown): Promise<unknown> {
+export async function peticionPrivada(ruta: string, datos?: unknown, cabeceras: Record<string,string> = {}): Promise<unknown> {
   return solicitudJson(ruta, datos === undefined
     ? { credentials: 'same-origin' }
     : {
         method: 'POST', credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json', 'X-XSRF-TOKEN': await csrf() },
+        headers: { ...cabeceras, 'Content-Type': 'application/json', 'X-XSRF-TOKEN': await csrf() },
         body: JSON.stringify(datos),
       })
 }

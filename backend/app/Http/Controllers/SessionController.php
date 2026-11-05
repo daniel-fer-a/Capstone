@@ -45,6 +45,12 @@ class SessionController extends Controller
             'can_review' => $access->reviewerHasPermission($user->id, 'admissions.read'),
             'can_start_review' => $access->reviewerHasPermission($user->id, 'admissions.read')
                 && $access->reviewerHasPermission($user->id, 'admissions.review.start'),
+            'can_manage_corrections' => $access->reviewerHasPermission($user->id, 'admissions.read') && $access->reviewerHasPermission($user->id, 'admissions.corrections.manage'),
+            'can_record_appeal' => $access->reviewerHasPermission($user->id, 'admissions.read') && $access->reviewerHasPermission($user->id, 'admissions.appeals.record'),
+            'can_formalize' => $access->reviewerHasPermission($user->id, 'admissions.read') && $access->reviewerHasPermission($user->id, 'admissions.membership.formalize'),
+            'can_read_members' => $access->reviewerHasPermission($user->id, 'admissions.read') && $access->reviewerHasPermission($user->id, 'admissions.membership.read'),
+            'can_export_members' => $access->reviewerHasPermission($user->id, 'admissions.membership.read') && $access->reviewerHasPermission($user->id, 'admissions.membership.export') && $access->reviewerHasPermission($user->id, 'admissions.read'),
+            'can_manage_notifications' => $access->reviewerHasPermission($user->id, 'admissions.read') && $access->reviewerHasPermission($user->id, 'admissions.notifications.manage'),
             'can_sponsor' => $access->effectiveGlobalAssignments($user->id, now())->where('ra.role_code', 'socio')->exists(),
             'can_record_decision' => $access->reviewerHasPermission($user->id, 'admissions.read')
                 && $access->reviewerHasPermission($user->id, 'admissions.decisions.record'),
