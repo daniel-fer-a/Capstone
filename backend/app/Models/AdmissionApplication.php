@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class AdmissionApplication extends Model
 {
@@ -20,6 +21,7 @@ class AdmissionApplication extends Model
         return [
             'submitted_at' => 'immutable_datetime', 'declaration_accepted_at' => 'immutable_datetime',
             'decision_at' => 'immutable_datetime',
+            'natural_age' => 'integer',
         ];
     }
 
@@ -35,6 +37,11 @@ class AdmissionApplication extends Model
 
     public function events(): HasMany
     {
-        return $this->hasMany(ApplicationEvent::class, 'application_id')->orderBy('occurred_at');
+        return $this->hasMany(ApplicationEvent::class, 'application_id')->orderBy('occurred_at')->orderBy('id');
+    }
+
+    public function resolution(): HasOne
+    {
+        return $this->hasOne(BoardResolution::class, 'application_id');
     }
 }

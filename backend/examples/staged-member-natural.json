@@ -1,0 +1,15 @@
+{
+  "membership": "member",
+  "legal": "natural",
+  "givenNames": "Persona",
+  "familyNames": "Ficticia",
+  "age": 30,
+  "identifier": "IDENTIFICACION-FICTICIA",
+  "email": "postulante@example.test",
+  "region": "La Araucanía",
+  "commune": "Temuco",
+  "aiActivity": "Investigación ficticia en inteligencia artificial.",
+  "sponsorEmails": ["socio.uno@example.test", "socio.dos@example.test"],
+  "declaration_accepted": true,
+  "sharing_accepted": true
+}

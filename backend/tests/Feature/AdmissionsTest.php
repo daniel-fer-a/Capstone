@@ -25,12 +25,15 @@ class AdmissionsTest extends TestCase
         parent::setUp();
         $this->withoutMiddleware(ThrottleRequests::class);
         $this->freezeTime();
+        config(['admissions.require_member_sponsors' => false]);
         Storage::fake('admissions-private');
     }
 
     private function natural(string $membership = 'member'): array
     {
         return ['membership' => $membership, 'legal' => 'natural', 'name' => 'Persona de prueba',
+            'givenNames' => 'Persona', 'familyNames' => 'de prueba', 'age' => 30,
+            'region' => 'Región de prueba', 'commune' => 'Comuna de prueba',
             'identifier' => 'Identificación de prueba', 'email' => 'POSTULANTE@example.org',
             'address' => 'Domicilio de prueba', 'aiActivity' => 'Investigación y desarrollo en IA.',
             'declaration_accepted' => true];
@@ -63,7 +66,7 @@ class AdmissionsTest extends TestCase
             }
         }
         $data = $this->natural();
-        unset($data['name'], $data['identifier']);
+        unset($data['name'], $data['identifier'], $data['givenNames'], $data['familyNames'], $data['age']);
 
         return [...$data, 'legal' => 'juridica', 'organizationName' => 'Organización de prueba',
             'organizationId' => 'Identificación de organización', 'representativeName' => 'Representante de prueba',
@@ -143,7 +146,7 @@ class AdmissionsTest extends TestCase
     public function test_company_application_requires_documents_and_two_sponsors(): void
     {
         $data = $this->natural();
-        unset($data['name'], $data['identifier']);
+        unset($data['name'], $data['identifier'], $data['givenNames'], $data['familyNames'], $data['age']);
         $this->submit([...$data, 'legal' => 'juridica', 'organizationName' => 'Organización',
             'organizationId' => 'id', 'representativeName' => 'Persona', 'representativeId' => 'id'])
             ->assertUnprocessable()->assertJsonValidationErrors(['documents.vigencia', 'documents.personeria', 'documents.estatutos', 'sponsors']);
@@ -310,7 +313,7 @@ class AdmissionsTest extends TestCase
     {
         $user = $this->user();
         $this->expectException(QueryException::class);
-        DB::transaction(fn () => $this->assignment($user, 'lider_comision')); // Requiere commission, no global.
+        DB::transaction(fn () => $this->assignment($user, 'lider_comision'));
     }
 
     #[Group('native-client')]
