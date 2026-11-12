@@ -22,6 +22,10 @@ import Continuar from './pages/Continuar'
 import Documentos from './pages/Documentos'
 import RevisionInstitucional from './pages/RevisionInstitucional'
 import Invitaciones from './pages/Invitaciones'
+import MiPerfil from './pages/MiPerfil'
+import Comisiones from './pages/Comisiones'
+import ComisionDetalle from './pages/ComisionDetalle'
+import InvitacionComision from './pages/InvitacionComision'
 
 export default function App() {
   return (
@@ -48,6 +52,11 @@ export default function App() {
           <Route path="area" element={<AreaPrivada />} />
           <Route path="area/socios" element={<RegistroSocios />} />
           <Route path="area/avisos" element={<GestionAvisos />} />
+          <Route path="area/perfil" element={<MiPerfil />} />
+          <Route path="area/comisiones" element={<Comisiones />} />
+          <Route path="area/comisiones/:id" element={<ComisionDetalle />} />
+          <Route path="invitacion" element={<InvitacionComision />} />
+          <Route path="invitacion/:id" element={<InvitacionComision />} />
           <Route path="*" element={<Pendiente titulo="Página no encontrada" detalle="La dirección no existe." />} />
         </Route>
       </Routes>

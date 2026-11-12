@@ -9,15 +9,23 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\RateLimiter;
 
 class IntakeController extends Controller
 {
     public function store(StoreIntakeRequest $request, PrivateSponsorships $service): JsonResponse
-    {
-        $result = $service->create($request->validated(), $request->header('Idempotency-Key'));
-        return response()->json(['data' => [...$service->ownerData($result['intake']),
-            'access_token' => $result['access_token'], 'replayed' => $result['replayed']]], 201)->header('Cache-Control', 'no-store');
+{
+    $limiterKey = 'intakes-created:'.$request->ip();
+    if (RateLimiter::tooManyAttempts($limiterKey, config('admissions.rate_limits.intakes_per_hour'))) {
+        abort(429, 'Demasiadas solicitudes creadas.', ['Retry-After' => RateLimiter::availableIn($limiterKey)]);
     }
+    $result = $service->create($request->validated(), $request->header('Idempotency-Key'));
+    if (! $result['replayed']) {
+        RateLimiter::hit($limiterKey, 3600);
+    }
+    return response()->json(['data' => [...$service->ownerData($result['intake']),
+        'access_token' => $result['access_token'], 'replayed' => $result['replayed']]], 201)->header('Cache-Control', 'no-store');
+}
 
     public function resume(Request $request, PrivateSponsorships $service): JsonResponse
     {

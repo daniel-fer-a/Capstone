@@ -1,6 +1,6 @@
-# Operación y continuidad
+# Operación, continuidad y colaboración
 
-Consolidado el 3 de noviembre de 2026. El código de operación acompaña al incremento de postulaciones; no publica servicios ni modifica el Compose de desarrollo recibido.
+Consolidado el 3 de noviembre de 2026. El código de operación acompaña al incremento de postulaciones y colaboración; no publica servicios ni modifica el Compose de desarrollo recibido.
 
 ## Validar la entrega
 
@@ -10,7 +10,7 @@ Desde `proyecto`, instalar las dependencias del frontend con `npm ci` en su carp
 node operacion/frontend_evidence.mjs
 ```
 
-Se verifica `CODIGO_SHA256.json` y se registran 24 pruebas, lint y build dentro de `private/evidencias`. La validación completa del backend debe producir 118 casos en PostgreSQL 18 nativo sobre una base desechable cuyo nombre termine en `_test`. Seguir la guía del paquete; no ejecutar pruebas contra los datos de trabajo.
+Se verifica `CODIGO_SHA256.json` y se registran 36 pruebas, lint y build dentro de `private/evidencias`. La validación completa del backend debe producir 169 casos en PostgreSQL 18 nativo sobre una base desechable cuyo nombre termine en `_test`. Seguir la guía del paquete; no ejecutar pruebas contra los datos de trabajo.
 
 El evaluador de evidencia recibe una copia completada de `aceptacion.template.json`. Las declaraciones parten pendientes. Revisa coherencia y presencia de resultados; no certifica independientemente una aceptación ni despliega el sistema.
 
@@ -51,3 +51,7 @@ bash operacion/scripts/restaurar_qa.sh ID_RESPALDO --aplicar
 Estos scripts solo corresponden al QA separado. El respaldo contiene datos, documentos y secretos: mantenerlo privado. Restaurar utiliza otro proyecto y puerto 8089, rechaza un destino existente y deja detenido el scheduler. No se ha probado una recuperación con Docker real. Conservar además el código que corresponde a cada respaldo.
 
 Los manuales detallados, límites y lista de validación están en `documentacion` en la raíz del paquete. No subir `private`, `.env`, dumps ni información real al repositorio o al chat.
+
+## Incremento de colaboración
+
+La base anterior está confirmada por Fabián; la ampliación nueva requiere validación. Consultar `documentacion/VALIDACION_FABIAN.md` en la raíz del paquete. `WORKSPACE_ENABLED` debe coincidir en API y scheduler. `workspace:ops summary --json` y `workspace:ops files --full --json` comprueban el nuevo módulo. Los respaldos incluyen ambos conjuntos de documentos privados. El evaluador exige también aislamiento de comisiones, consentimiento de invitaciones, recursos privados y recuperación de respuestas; no marcar esas evidencias como aprobadas sin comprobarlas.

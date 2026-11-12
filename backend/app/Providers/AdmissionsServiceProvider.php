@@ -10,17 +10,20 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Auth\Notifications\ResetPassword;
+use PSpell\Config;
 
 class AdmissionsServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
+        RateLimiter::for('workspace-writes',fn(Request $request)=>Limit::perMinute(40)->by($request->user()?->id??$request->ip()));
+        RateLimiter::for('workspace-invitations',fn(Request $request)=>Limit::perMinute(8)->by($request->ip()));
         Gate::policy(AdmissionApplication::class, AdmissionApplicationPolicy::class);
         RateLimiter::for('institutional-exports', fn (Request $request) => Limit::perMinute(2)->by($request->user()?->id ?? $request->ip()));
         RateLimiter::for('notification-retries', fn (Request $request) => Limit::perMinute(2)->by($request->user()?->id ?? $request->ip()));
         RateLimiter::for('admissions', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
-        RateLimiter::for('tracking', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
-        RateLimiter::for('intakes', fn (Request $request) => [Limit::perMinute(3)->by($request->ip()), Limit::perHour(20)->by($request->ip())]);
+        RateLimiter::for('tracking', fn (Request $request) => Limit::perMinute(config('admissions.rate_limits.tracking_per_minute'))->by($request->ip()));
+        RateLimiter::for('intakes', fn (Request $request) => [Limit::perMinute(Config('admissions.rate_limits.intakes_per_minute'))->by($request->ip()), Limit::perHour(Config('admissions.rate_limits.intakes_per_hour'))->by($request->ip())]);
         RateLimiter::for('sponsorships', fn (Request $request) => Limit::perMinute(10)->by($request->user()?->id ?? $request->ip()));
         RateLimiter::for('login', fn (Request $request) => [
             Limit::perMinute(20)->by('ip:'.$request->ip()),

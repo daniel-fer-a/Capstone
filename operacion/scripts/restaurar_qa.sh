@@ -16,4 +16,5 @@ dc exec -T db pg_restore --exit-on-error --no-owner --no-privileges -U cchia_qa 
 dc run --rm --no-deps --user root --entrypoint sh php -c 'mkdir -p /app/storage/app/private && tar --no-same-owner --no-same-permissions -xzf - -C /app/storage/app/private && chown -R www-data:www-data /app/storage' < "$cchia_snapshot/private-files.tar.gz"
 dc up -d php web
 dc exec -T php php artisan cchia:ops files --full --json
+dc exec -T php php artisan workspace:ops files --full --json
 echo 'Restauración aislada disponible en http://localhost:8089. Scheduler detenido. Validar acceso y expedientes antes de declarar recuperación comprobada.'

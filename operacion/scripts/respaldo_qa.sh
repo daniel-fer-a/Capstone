@@ -20,7 +20,8 @@ trap finish EXIT
 cchia_running_key="$(dc exec -T php php -r 'echo hash("sha256",(string)getenv("APP_KEY"));')"
 cchia_configured_key="$(dc run --rm --no-deps --entrypoint php php -r 'echo hash("sha256",(string)getenv("APP_KEY"));')"
 [[ -n "$cchia_running_key" && "$cchia_running_key" = "$cchia_configured_key" ]] || { echo 'La clave del entorno y la del servicio no coinciden.' >&2; exit 1; }
-dc exec -T php php artisan cchia:ops files --full --json >/dev/null
+dc exec -T php php artisan cchia:ops files --full --json
+dc exec -T php php artisan workspace:ops files --full --json >/dev/null
 mapfile -t cchia_services < <(dc --profile operation ps --status running --services | sed -n '/^php$/p; /^web$/p; /^scheduler$/p')
 (( ${#cchia_services[@]} )) || { echo 'No hay servicios QA activos para respaldar.' >&2; exit 1; }
 dc --profile operation stop "${cchia_services[@]}" >/dev/null

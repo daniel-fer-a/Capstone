@@ -1,8 +1,8 @@
 import { ApiError, esObjeto, solicitudJson } from './api.ts'
 
-export type Sesion = { id: string; name: string; email: string; can_review: boolean; can_start_review: boolean; can_sponsor?: boolean; can_record_decision?: boolean; can_manage_corrections?: boolean; can_record_appeal?: boolean; can_formalize?: boolean; can_read_members?: boolean; can_export_members?: boolean; can_manage_notifications?: boolean }
+export type Sesion = { id: string; name: string; email: string; can_review: boolean; can_start_review: boolean; can_sponsor?: boolean; can_record_decision?: boolean; can_manage_corrections?: boolean; can_record_appeal?: boolean; can_formalize?: boolean; can_read_members?: boolean; can_export_members?: boolean; can_manage_notifications?: boolean; workspace_enabled?: boolean; can_manage_commissions?: boolean }
 
-async function csrf(): Promise<string> {
+export async function csrf(): Promise<string> {
   const respuesta = await fetch('/sanctum/csrf-cookie', { credentials: 'same-origin', headers: { Accept: 'application/json' }, cache: 'no-store' })
   if (!respuesta.ok) throw new ApiError(respuesta.status, 'No pudimos iniciar la conexión segura. Inténtalo nuevamente.')
   const cookie = document.cookie.split('; ').find((item) => item.startsWith('XSRF-TOKEN='))

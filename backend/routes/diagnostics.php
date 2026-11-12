@@ -115,6 +115,7 @@ Artisan::command('admissions:send-notifications {--limit=25}', function (): int 
 Illuminate\Support\Facades\Schedule::command('admissions:send-notifications --limit=25')->everyMinute()->withoutOverlapping(5);
 Illuminate\Support\Facades\Schedule::command('admissions:purge-submission-secrets')->hourly()->withoutOverlapping();
 Illuminate\Support\Facades\Schedule::command('cchia:ops heartbeat --json')->everyMinute()->withoutOverlapping(2);
+Illuminate\Support\Facades\Schedule::command('workspace:send-invitations --limit=25')->everyMinute()->withoutOverlapping(5);
 
 Artisan::command('admissions:notifications-status', function (): int {
     $table = DB::table('cchia_admissions.notification_outbox');

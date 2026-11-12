@@ -42,6 +42,8 @@ class SessionController extends Controller
 
         return response()->json(['data' => [
             'id' => $user->id, 'name' => $user->name, 'email' => $user->email,
+            'workspace_enabled'=>(bool)config('workspace.enabled'),
+            'can_manage_commissions'=>(bool)config('workspace.enabled')&&app(\App\Services\WorkspaceAccess::class)->administrator($user),
             'can_review' => $access->reviewerHasPermission($user->id, 'admissions.read'),
             'can_start_review' => $access->reviewerHasPermission($user->id, 'admissions.read')
                 && $access->reviewerHasPermission($user->id, 'admissions.review.start'),

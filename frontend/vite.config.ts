@@ -9,8 +9,8 @@ export default defineConfig({
     port: 5173,
     watch: { usePolling: true },
     proxy: {
-      '/api': { target: process.env.API_PROXY_TARGET ?? 'http://127.0.0.1:8000', changeOrigin: true },
-      '/sanctum': { target: process.env.API_PROXY_TARGET ?? 'http://127.0.0.1:8000', changeOrigin: true },
+      '/api': { target: process.env.API_PROXY_TARGET ?? 'http://127.0.0.1:8000', changeOrigin: true, xfwd: true },
+      '/sanctum': { target: process.env.API_PROXY_TARGET ?? 'http://127.0.0.1:8000', changeOrigin: true, xfwd: true },
     },
   },
 })

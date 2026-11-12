@@ -29,6 +29,6 @@ case "$cchia_action" in
         exit "$cchia_status"
         ;;
     scheduler) dc --profile operation up -d scheduler ;;
-    estado) dc --profile operation ps; dc exec -T php php artisan cchia:ops summary --json ;;
+    estado) dc --profile operation ps; dc exec -T php php artisan cchia:ops summary --json; dc exec -T php php artisan workspace:ops summary --json ;;
     parar) dc --profile operation stop ;;
 esac

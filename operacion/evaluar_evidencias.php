@@ -62,7 +62,7 @@ try {
     if ($names !== ['build','lint','test']) $errors[] = 'frontend_commands_incomplete';
     $frontend = junitCounts(dirname($frontPath).'/frontend.xml');
     if ($frontend['tests'] < $version['expected_frontend_tests'] || $frontend['failures'] || $frontend['skipped']) $errors[] = 'frontend_suite_incomplete_or_failed';
-    $required = ['private_document_access','effective_permissions','own_request_denied','native_concurrency','document_integrity','functional_acceptance'];
+    $required = ['private_document_access','effective_permissions','own_request_denied','native_concurrency','document_integrity','functional_acceptance','workspace_scope_isolation','workspace_invitation_consent','workspace_private_resources','workspace_lost_response_recovery'];
     if ($target === 'production') $required = [...$required,'https_and_sessions','smtp_received','scheduler_running','backup_restore','institutional_permissions','data_treatment_defined'];
     foreach ($required as $name) {
         $check = $config['checks'][$name] ?? [];

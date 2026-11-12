@@ -44,6 +44,8 @@ export default function AreaPrivada() {
     {!sesion && !error && <p role="status">Comprobando sesión…</p>}
     {sesion && <>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-white p-4"><p className="text-sm">Sesión de <strong>{sesion.name}</strong></p><button disabled={saliendo} className={botonSecundario} onClick={salir}>{saliendo ? 'Cerrando…' : 'Cerrar sesión'}</button></div>
+      <Link className={`${botonSecundario} mb-6 mr-3`} to="/area/perfil">Mi perfil →</Link>
+      {sesion.workspace_enabled && <Link className={`${botonSecundario} mb-6 mr-3`} to="/area/comisiones">Mis comisiones →</Link>}
       {sesion.can_read_members && <Link className={`${botonSecundario} mb-6 mr-3`} to="/area/socios">Consultar registro de socios →</Link>}
       {sesion.can_manage_notifications && <Link className={`${botonSecundario} mb-6 mr-3`} to="/area/avisos">Gestionar avisos →</Link>}
       {sesion.can_sponsor && <Link className={`${botonPrimario} mb-6`} to="/area/patrocinios">Ver solicitudes de patrocinio →</Link>}

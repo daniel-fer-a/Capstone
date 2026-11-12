@@ -19,6 +19,10 @@ return [
             'serve' => false, 'visibility' => 'private', 'throw' => true,
         ],
         'admissions-private' => $privateDisk,
+        'workspace-private' => $privateDisk['driver']==='s3' ? [...$privateDisk,'root'=>trim($privateDisk['root'],'/').'/workspace'] : [
+            'driver'=>'local','root'=>storage_path('app/private/workspace'),'serve'=>false,'visibility'=>'private','throw'=>true,
+            'permissions'=>['file'=>['private'=>0600],'dir'=>['private'=>0700]],
+        ],
     ],
     'links' => [],
 ];

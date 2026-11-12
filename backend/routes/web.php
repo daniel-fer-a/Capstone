@@ -17,3 +17,5 @@ Route::prefix('api/v1/session')->group(function (): void {
         Route::post('/logout', [SessionController::class, 'logout']);
     });
 });
+
+require __DIR__.'/workspace.php';

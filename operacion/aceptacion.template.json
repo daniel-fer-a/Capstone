@@ -4,18 +4,70 @@
   "backend_junit": "",
   "frontend_report": "",
   "checks": {
-    "private_document_access": {"passed": false, "evidence": ""},
-    "effective_permissions": {"passed": false, "evidence": ""},
-    "own_request_denied": {"passed": false, "evidence": ""},
-    "native_concurrency": {"passed": false, "evidence": ""},
-    "document_integrity": {"passed": false, "evidence": ""},
-    "functional_acceptance": {"passed": false, "evidence": ""},
-    "https_and_sessions": {"passed": false, "evidence": ""},
-    "smtp_received": {"passed": false, "evidence": ""},
-    "scheduler_running": {"passed": false, "evidence": ""},
-    "backup_restore": {"passed": false, "evidence": ""},
-    "institutional_permissions": {"passed": false, "evidence": ""},
-    "data_treatment_defined": {"passed": false, "evidence": ""}
+    "private_document_access": {
+      "passed": false,
+      "evidence": ""
+    },
+    "effective_permissions": {
+      "passed": false,
+      "evidence": ""
+    },
+    "own_request_denied": {
+      "passed": false,
+      "evidence": ""
+    },
+    "native_concurrency": {
+      "passed": false,
+      "evidence": ""
+    },
+    "document_integrity": {
+      "passed": false,
+      "evidence": ""
+    },
+    "functional_acceptance": {
+      "passed": false,
+      "evidence": ""
+    },
+    "https_and_sessions": {
+      "passed": false,
+      "evidence": ""
+    },
+    "smtp_received": {
+      "passed": false,
+      "evidence": ""
+    },
+    "scheduler_running": {
+      "passed": false,
+      "evidence": ""
+    },
+    "backup_restore": {
+      "passed": false,
+      "evidence": ""
+    },
+    "institutional_permissions": {
+      "passed": false,
+      "evidence": ""
+    },
+    "data_treatment_defined": {
+      "passed": false,
+      "evidence": ""
+    },
+    "workspace_scope_isolation": {
+      "passed": false,
+      "evidence": ""
+    },
+    "workspace_invitation_consent": {
+      "passed": false,
+      "evidence": ""
+    },
+    "workspace_private_resources": {
+      "passed": false,
+      "evidence": ""
+    },
+    "workspace_lost_response_recovery": {
+      "passed": false,
+      "evidence": ""
+    }
   },
   "voting_scope": {
     "decision": "pending",

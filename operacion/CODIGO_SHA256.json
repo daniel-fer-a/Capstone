@@ -1,7 +1,8 @@
 {
   "schema_version": 1,
   "prepared_date": "2026-11-03",
-  "source_sha256": "4b1ee558e93aa133dcfec7cca8cdc9ee2f596a9da371022c21b09efaba37f538",
+  "release": "colaboracion-y-accesos-20261103",
+  "source_sha256": "483682ccada9c6751098d4304c3a3d7b496b7e3a33e7d6035559da90affc43e0",
   "excluded": [
     "vendor",
     "node_modules",
@@ -22,11 +23,11 @@
     },
     {
       "path": "backend/.env.example",
-      "sha256": "0e57be08914cf4d66fbaafb3f238f2308bc7a2583ad145b0114f6aa3180500c7"
+      "sha256": "a35880ca06dbb79a56448e539ccb1479d22d7468f50bb3c99ff3323c758f3a67"
     },
     {
       "path": "backend/.env.testing.example",
-      "sha256": "e70a6fbe4e0ca5efd1245a340bc8f78d64504c38fed4de1091c6c3cf1df661cf"
+      "sha256": "60d13324433eef80909b431f960a1eeb1f742ad62243bb0eef7ac1708a0e9831"
     },
     {
       "path": "backend/.gitattributes",
@@ -65,6 +66,18 @@
       "sha256": "2ab3baa2ecefa28f329f8ed145d57f41faf93d55d5bd6d6f5a1e518afec2d636"
     },
     {
+      "path": "backend/app/Console/Commands/WorkspaceLocalPermissions.php",
+      "sha256": "a5660fa86ad5fe0fd55f50ac0d4313cbf283a172fa4657a39bea243d839ab76d"
+    },
+    {
+      "path": "backend/app/Console/Commands/WorkspaceOperations.php",
+      "sha256": "d71f8daf9c785b1dc82614233e86a126628e2cd9fd97e9eaf26d492f8be654c3"
+    },
+    {
+      "path": "backend/app/Console/Commands/WorkspaceSendInvitations.php",
+      "sha256": "aee803d1ab9741364a776f22d6936f0641dcdbefaa3d3e78e6485599d2649ecc"
+    },
+    {
       "path": "backend/app/Http/Controllers/AdmissionCapabilitiesController.php",
       "sha256": "692c860f9f92f991018c247683d5adbfaabd6e552e794e0f101757d3f7229f4f"
     },
@@ -101,12 +114,24 @@
       "sha256": "ee088dcc199916e9f71eea5d231afc3f050dcaadcdc0214564c94071cb00df00"
     },
     {
+      "path": "backend/app/Http/Controllers/ProfileController.php",
+      "sha256": "39a9091eab58a4a77e2eaa686ee8465fac3b5f0e0753a0bcd99c7f7ac28a9e2a"
+    },
+    {
       "path": "backend/app/Http/Controllers/SessionController.php",
-      "sha256": "4987d6bdf97dd73237ca54eadf21047e7125c9cf861b4e10f2657c45d9d5aa3e"
+      "sha256": "4f3c73843942d9efe8d767c2dde24db8c6b32168e5d4ff7613764b1250b96c13"
     },
     {
       "path": "backend/app/Http/Controllers/SponsorInvitationController.php",
       "sha256": "c030f6f4ecb0e9458e9342cbf74e53f9334d960834cc45bc9258b5c12badf430"
+    },
+    {
+      "path": "backend/app/Http/Controllers/WorkspaceController.php",
+      "sha256": "fdb6732e71df60d151745ff7fc286288cca722827a8a19ecc826814cb4ce05e6"
+    },
+    {
+      "path": "backend/app/Http/Controllers/WorkspaceInvitationController.php",
+      "sha256": "e87531b7493df230800db14b9a1e85e6df01175f5813443a45d889b5f0e6fc67"
     },
     {
       "path": "backend/app/Http/Requests/StoreApplicationRequest.php",
@@ -127,6 +152,10 @@
     {
       "path": "backend/app/Mail/SponsorshipInvitation.php",
       "sha256": "23cfc46c842197c6763256109e03aeda34047d4c47f79b82b17b3f0a28fdcbf2"
+    },
+    {
+      "path": "backend/app/Mail/WorkspaceInvitation.php",
+      "sha256": "535c110856eadfe14e711a57e40c7f377bf62e92427b844d62244d735c9e66b4"
     },
     {
       "path": "backend/app/Models/AdmissionApplication.php",
@@ -174,7 +203,7 @@
     },
     {
       "path": "backend/app/Providers/AdmissionsServiceProvider.php",
-      "sha256": "cd3bba75ce40a5e95193585b1b2d5a0859462947378fc6478791da230c5edc57"
+      "sha256": "e9be80ba834f556f0f2bf829dfe51823123d4790e31647423469e486b9101082"
     },
     {
       "path": "backend/app/Providers/AppServiceProvider.php",
@@ -223,6 +252,26 @@
     {
       "path": "backend/app/Services/ReleaseReadiness.php",
       "sha256": "636ea7b127cc9cbf6971496db60c43f4be2f5b6c0130e11a942c52ac1eb72c9c"
+    },
+    {
+      "path": "backend/app/Services/WorkspaceAccess.php",
+      "sha256": "44deaf7a0584aeab3c3d0e037ef2a9be7570e02e6a8a0dec13f5f3c55a01a695"
+    },
+    {
+      "path": "backend/app/Services/WorkspaceChecks.php",
+      "sha256": "3f60f1d46403bda0df09d33858584a508b1f49b07b83759904407ba0b6b7bb6e"
+    },
+    {
+      "path": "backend/app/Services/WorkspaceInvitations.php",
+      "sha256": "f59c11c155a74b1d505b481e04bd0e005dde4d63a41b5ad2839cae6d19cb85c9"
+    },
+    {
+      "path": "backend/app/Services/WorkspaceMailOutbox.php",
+      "sha256": "4add5fe39e189226d5aeea286ce1a19eee1090a151ef8a8f6e6737619dc10583"
+    },
+    {
+      "path": "backend/app/Services/WorkspaceMutation.php",
+      "sha256": "26375111701ece3c03bb01f52ec8a61c1616154f67d27f953964cd54bda7301c"
     },
     {
       "path": "backend/artisan",
@@ -274,7 +323,7 @@
     },
     {
       "path": "backend/config/filesystems.php",
-      "sha256": "ff2bee476f187d21c42ac70ce7ff681bda75d553845cedc6a8ad4c2682b6965d"
+      "sha256": "717f0bb95b80cce278af705105b4324221d801543394f7812822c4aab88f48c0"
     },
     {
       "path": "backend/config/logging.php",
@@ -299,6 +348,10 @@
     {
       "path": "backend/config/session.php",
       "sha256": "64272cfbef6f47c65bf857f1c5b1e853700c0d0278de46b86663fd83ef4aeed8"
+    },
+    {
+      "path": "backend/config/workspace.php",
+      "sha256": "603eff48e23279daf6b33283c93a7a28a768d970609395b7443cbba94c0e4f8b"
     },
     {
       "path": "backend/database/.gitignore",
@@ -347,6 +400,10 @@
     {
       "path": "backend/database/migrations/2026_11_02_000009_add_register_access_and_notification_retries.php",
       "sha256": "9cacd85f882f0055a83add44b83a23c80d02ac262d3f553ab614c6ef66b0fc26"
+    },
+    {
+      "path": "backend/database/migrations/2026_11_03_000010_create_scoped_collaboration.php",
+      "sha256": "5267ab22c73c0eb98a86a7dd1dee7081d16e28356d7c685e8246cf682efaeca0"
     },
     {
       "path": "backend/database/reference/modelo-02-catalogo-roles-alineado-v1.0.sql",
@@ -429,16 +486,24 @@
       "sha256": "4f6cfaf6fdd1cbfc3b89be6546a2a25138c6a83a22dc82cb9984d1c2a589d590"
     },
     {
+      "path": "backend/resources/views/mail/workspace-invitation.blade.php",
+      "sha256": "103365ad816665134678f863a6e1916d1a67b573aed2e432d2fa41ba0eda853d"
+    },
+    {
       "path": "backend/routes/api.php",
       "sha256": "d197b06f87c41f97a7958755a5f809830bc464a109e251adc213ce1e84e25ca0"
     },
     {
       "path": "backend/routes/diagnostics.php",
-      "sha256": "62c217dfc66b04c2691587fb66a96901b8c7b21fac8186b6c8a6858da42f86b1"
+      "sha256": "23aac5801f80461a27a14433502683741fc0146f2dbacddaf61b5f66bd58dfda"
     },
     {
       "path": "backend/routes/web.php",
-      "sha256": "4378cd4fc6c19318f885c5af1ba0f8f7b0c2d588291c9d67cc68cdb07dab963c"
+      "sha256": "643e3ef4ad49188ca87b5dc512ec49087775aef6623be07889bffaf73a2778a1"
+    },
+    {
+      "path": "backend/routes/workspace.php",
+      "sha256": "6bcbb6680a77934fbedf11e9a17712b5b2e7aed4ea7bba1ba2d2df4e47baa5aa"
     },
     {
       "path": "backend/storage/app/.gitignore",
@@ -501,6 +566,10 @@
       "sha256": "b7faba8a041d0edec2d34e1b4d6feec0309d77205bafbc3aca19102c61311f99"
     },
     {
+      "path": "backend/tests/Feature/WorkspaceTest.php",
+      "sha256": "c253a81a1b2e137eb4cf58ae4fd1b6ff4dbc853ac5eeacb861e7a73ea3fcaa2b"
+    },
+    {
       "path": "backend/tests/Feature/ZConcurrentAdmissionsTest.php",
       "sha256": "7fcbc5fd8189e5bea870d8990d40e5d7e6baba848e3b7c830e0dd4144701fc17"
     },
@@ -554,7 +623,7 @@
     },
     {
       "path": "frontend/src/App.tsx",
-      "sha256": "0586ca6990fbce6d52e7d48ac468006ffd441192849a4a40b1c3fbc76602a24a"
+      "sha256": "c22af0dc8e6e219a29627c4d85f5aee6cd7dceef34621d5c0be228cdf73bc802"
     },
     {
       "path": "frontend/src/assets/hero.png",
@@ -605,6 +674,10 @@
       "sha256": "7beaba67cc09ae9b2bddc37f43b4a32bb464d7f91cd4beac5d01a2a3a3619b66"
     },
     {
+      "path": "frontend/src/components/WorkspaceCommon.tsx",
+      "sha256": "2e577482d7aff4f4b7a5cc179a11b157e0a3224ad474393e4f17f1c0a4c760c1"
+    },
+    {
       "path": "frontend/src/components/estilos.ts",
       "sha256": "ae4f0095879e9d4c11eab86e6996ed0bb6b7894415103767c181165950abc490"
     },
@@ -634,7 +707,7 @@
     },
     {
       "path": "frontend/src/lib/httpPrivado.ts",
-      "sha256": "361b28276126f4bb769024b6e50cdf11f312b69a1f8f58f10d3064bf7300fac4"
+      "sha256": "3ad5fd6f813101072ac8d5ec1cac428f3d0e8e4c58f3f7edbcc30f33e538e59c"
     },
     {
       "path": "frontend/src/lib/operacion.ts",
@@ -647,6 +720,14 @@
     {
       "path": "frontend/src/lib/useSesionInstitucional.ts",
       "sha256": "1e3737c354554f76e83a38ebe93df61fea1b6a0d9f9f5a12c17e63616ddbc08e"
+    },
+    {
+      "path": "frontend/src/lib/useWorkspaceAction.ts",
+      "sha256": "f5757dda718d022b204b12769c0346165364ec42cc98e6dab8511acfbcee705e"
+    },
+    {
+      "path": "frontend/src/lib/workspace.ts",
+      "sha256": "9941f0e24427ee378dde86bfe9079ef5114e56436b3b150ef9252f7fd938060c"
     },
     {
       "path": "frontend/src/main.tsx",
@@ -662,7 +743,15 @@
     },
     {
       "path": "frontend/src/pages/AreaPrivada.tsx",
-      "sha256": "68b3f71928071b5856b2b24977154b492538db36cb08fd68e3b93cff5559faac"
+      "sha256": "e94536486750b7428731d4d6ca3016594759102ee2dad631b11769dc26c89c13"
+    },
+    {
+      "path": "frontend/src/pages/ComisionDetalle.tsx",
+      "sha256": "b762d0b20020336fb72d63e5d089763b4a494ca4a853dfba460533114ef87e64"
+    },
+    {
+      "path": "frontend/src/pages/Comisiones.tsx",
+      "sha256": "2b554c1b134b4677c5e28d33a645d8d96c2fa1db3fa6938dab9b9f262cf417ec"
     },
     {
       "path": "frontend/src/pages/Comprobante.tsx",
@@ -693,8 +782,16 @@
       "sha256": "3cde1b5ade7b703be2a47fd55a033c5380f532a7a99971455497339f8ea8cc6d"
     },
     {
+      "path": "frontend/src/pages/InvitacionComision.tsx",
+      "sha256": "4203ab0ad5ffade4de42f177bf9e7d331291207e9b74fd8c153f037745ce10e4"
+    },
+    {
       "path": "frontend/src/pages/Invitaciones.tsx",
       "sha256": "0643677dcfea68194e1ad6219028edd48847b245779bfc70ea5361dfdadbf66a"
+    },
+    {
+      "path": "frontend/src/pages/MiPerfil.tsx",
+      "sha256": "523bb69390ab6960812f38e46b83958bc279e1bb9b953f0faeb610ba9c782835"
     },
     {
       "path": "frontend/src/pages/Modalidad.tsx",
@@ -757,6 +854,10 @@
       "sha256": "828110db6d85d6206c38efe06a8b13d956329d9820e29ae3ec4e0aae5044bb42"
     },
     {
+      "path": "frontend/tests/workspace.test.ts",
+      "sha256": "831b82e6a54a384638438b7b7d6ba1e7eaec18b0efc29679395e37c2818468b1"
+    },
+    {
       "path": "frontend/tsconfig.app.json",
       "sha256": "54e49dcf02e8a36158c31e9ec609621ca7f860b8c2ed25a06234ccf881213eaf"
     },
@@ -786,15 +887,15 @@
     },
     {
       "path": "operacion/README.md",
-      "sha256": "ad41d5a5f13d264a3fbb9203718f4f9234dc1617f597b9b10354ddb5ae65226f"
+      "sha256": "fbb5a7f4706d95374ecbab8cf58c5c80a56026588cb87290ae88b6dad14c3a6c"
     },
     {
       "path": "operacion/VERSION.json",
-      "sha256": "b1826fd5b29188a35b02a8b7803a36645a439784a945ab0c4fe97cc75104a182"
+      "sha256": "3ea9dd53ac9433ea3583e345fb50662458590d6f67735305782e26854137e113"
     },
     {
       "path": "operacion/aceptacion.template.json",
-      "sha256": "a7b7e5ec3313f98be1651fe23225c3ffe4b82f7e5b3b63a69355e5dc021332b6"
+      "sha256": "46e20a344457096ce5fc2310323ff250b23364736f12d982fd8f5b36eec69595"
     },
     {
       "path": "operacion/compose.qa.yaml",
@@ -822,7 +923,7 @@
     },
     {
       "path": "operacion/evaluar_evidencias.php",
-      "sha256": "a3e0a24a749958546c5f4c95c9a6ab996998280dd9f4bbb2e1b1fb51a9dc64ff"
+      "sha256": "0e62691df4d47da1101c0ef35d625931502601e434b038de740fb1a4cb338116"
     },
     {
       "path": "operacion/frontend_evidence.mjs",
@@ -830,7 +931,7 @@
     },
     {
       "path": "operacion/qa.env.example",
-      "sha256": "efd705cdcd48a684165e8ba8a1140447c409de71f93328d5ce73c261920229f4"
+      "sha256": "ab9cfe851fbe3929c31cd0af9acfe108543298e8c6d03e09c1a11e906e2e7c29"
     },
     {
       "path": "operacion/scripts/comun.sh",
@@ -842,15 +943,15 @@
     },
     {
       "path": "operacion/scripts/qa.sh",
-      "sha256": "9d0b6879dff2fa1e223a6b42171bb488e3266b5cd0c4c740b8ed1e7b8469af7a"
+      "sha256": "6a6a8472c10578303443249754adabc50aefc775d7db06dd6edfbe04441efb5b"
     },
     {
       "path": "operacion/scripts/respaldo_qa.sh",
-      "sha256": "bb61dfb8f8fe8a626798ee8b3c39fcf3224e8b8d319e0af22180025ebe5d0ec8"
+      "sha256": "40b884014ee6c9889ca719fdfa0053901059946957fbe82cfe000cb70626fe9d"
     },
     {
       "path": "operacion/scripts/restaurar_qa.sh",
-      "sha256": "88cdab4abe466905848e794bd9f79818f3cfc72414a1442f6175120e1a86f920"
+      "sha256": "73e5b837035804a5cd207ca8470d61219808f3575212df351a57a63c667ef6f1"
     },
     {
       "path": "operacion/scripts/verificar_respaldo.sh",
