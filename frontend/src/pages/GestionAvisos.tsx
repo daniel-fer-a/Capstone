@@ -7,6 +7,7 @@ import { peticionPrivada } from '../lib/httpPrivado'
 import { fechaLarga } from '../lib/formato'
 import { esAvisoCorreo, leerPagina, nombreEstadoAviso, type AvisoCorreo } from '../lib/operacion'
 import { useSesionInstitucional } from '../lib/useSesionInstitucional'
+import { nuevaClave } from '../lib/clave'
 
 const tipos: Record<string,string> = { sponsor_invitation: 'Invitación de patrocinio', application_received: 'Recepción de postulación', application_event: 'Actualización del expediente' }
 export default function GestionAvisos() {
@@ -42,7 +43,7 @@ function Reintentar({ id, alCompletar }: { id: string; alCompletar: () => void }
   const enviar = async (e: FormEvent) => {
     e.preventDefault()
     if (lock.current || !confirmation || reason.trim().length < 10) return
-    lock.current = true; setBusy(true); setError(''); key.current ??= crypto.randomUUID()
+    lock.current = true; setBusy(true); setError(''); key.current ??= nuevaClave()
     try { await peticionPrivada(`/api/v1/admin/notifications/${id}/retry`, { reason: reason.trim(), confirmation }, { 'Idempotency-Key': key.current }); alCompletar() }
     catch (err) { setUncertain(err instanceof ApiError && err.incierto); setError(err instanceof ApiError ? err.message : 'No pudimos confirmar la reactivación. Consulta el estado antes de cambiar el motivo.') }
     finally { lock.current = false; setBusy(false) }

@@ -7,6 +7,7 @@ import { ApiError } from '../lib/api'
 import { crearSolicitud, renovarPatrocinadores, retomarSolicitud, validarCorreos } from '../lib/patrocinios'
 import { fechaLarga } from '../lib/formato'
 import { usePostulacion } from '../postulacion/postulacionContext'
+import { nuevaClave } from '../lib/clave'
 
 const ETIQUETAS: Record<string, string> = {
   pending: 'Pendiente de confirmación', accepted: 'Patrocinio confirmado', declined: 'Patrocinio rechazado',
@@ -82,7 +83,7 @@ export function PanelPatrocinios() {
   const [emails, setEmails] = useState(() => previa?.invitations.map(i => i.email) ?? ['', ''])
   const [confirmado, setConfirmado] = useState(false)
   const [incierto, setIncierto] = useState(false)
-  const [clave, setClave] = useState(() => crypto.randomUUID())
+  const [clave, setClave] = useState(() => nuevaClave())
   const bloqueo = useRef(false)
   useEffect(() => {
     const aviso = (ev: BeforeUnloadEvent) => ev.preventDefault()
@@ -106,7 +107,7 @@ export function PanelPatrocinios() {
     try {
       setPrevia(await renovarPatrocinadores(previa, emails, clave))
       setRespaldo(null); setEstatutos(null); setVigencia(null)
-      setCambiar(false); setConfirmado(false); setIncierto(false); setClave(crypto.randomUUID())
+      setCambiar(false); setConfirmado(false); setIncierto(false); setClave(nuevaClave())
     } catch (e) { setError(e instanceof ApiError ? Object.values(e.campos)[0] ?? e.message : 'No pudimos confirmar la renovación.'); setIncierto(!(e instanceof ApiError) || e.incierto) }
     finally { bloqueo.current = false; setOcupado(false) }
   }

@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { ApiError } from './api'
 import { workspaceRequest } from './workspace'
+import { nuevaClave } from './clave'
 
 export function useWorkspaceAction() {
   const pending = useRef<{ url: string; body: unknown; key: string } | null>(null), flight = useRef(false)
@@ -9,7 +10,7 @@ export function useWorkspaceAction() {
   async function run(url: string, body: unknown, verify: (v: unknown) => unknown, success: (v: unknown) => Promise<void> | void): Promise<boolean> {
     if (flight.current) return false
     if (pending.current && pending.current.url !== url) { setError('Primero recupera la operación pendiente.'); return false }
-    const operation = pending.current ?? { url, body, key: crypto.randomUUID() }; pending.current = operation; setPendingUrl(operation.url); flight.current = true; setBusy(true); setError(''); setMessage('')
+    const operation = pending.current ?? { url, body, key: nuevaClave() }; pending.current = operation; setPendingUrl(operation.url); flight.current = true; setBusy(true); setError(''); setMessage('')
     let confirmed = false
     try {
       const response = await workspaceRequest(operation.url, operation.body, operation.key); verify(response)

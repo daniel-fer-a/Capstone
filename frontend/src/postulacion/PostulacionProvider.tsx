@@ -1,11 +1,12 @@
 import { useMemo, useState, type ReactNode } from 'react'
+import { nuevaClave } from '../lib/clave'
 import { PostulacionContext, type Comprobante, type DatosNatural, type DatosJuridica, type SolicitudPrevia } from './postulacionContext'
 
 export function PostulacionProvider({ children }: { children: ReactNode }) {
   const [datos, setDatos] = useState<DatosNatural | null>(null)
   const [respaldo, setRespaldo] = useState<File | null>(null)
   const [comprobante, setComprobante] = useState<Comprobante | null>(null)
-  const [claveEnvio, setClaveEnvio] = useState(() => crypto.randomUUID())
+  const [claveEnvio, setClaveEnvio] = useState(() => nuevaClave())
   const [juridica, setJuridica] = useState<DatosJuridica | null>(null)
   const [previa, setPrevia] = useState<SolicitudPrevia | null>(null)
   const [estatutos, setEstatutos] = useState<File | null>(null)
@@ -25,7 +26,7 @@ export function PostulacionProvider({ children }: { children: ReactNode }) {
         setDatos(null)
         setRespaldo(null)
         setComprobante(null)
-        setClaveEnvio(crypto.randomUUID())
+        setClaveEnvio(nuevaClave())
         setJuridica(null)
         setPrevia(null)
         setEstatutos(null)

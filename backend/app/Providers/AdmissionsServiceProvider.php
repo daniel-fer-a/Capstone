@@ -33,5 +33,6 @@ class AdmissionsServiceProvider extends ServiceProvider
         ResetPassword::createUrlUsing(fn ($user, string $token) => rtrim(config('admissions.frontend_url'), '/').'/restablecer#'.http_build_query([
             'token' => $token, 'email' => $user->getEmailForPasswordReset(),
         ], '', '&', PHP_QUERY_RFC3986));
+        RateLimiter::for('submit', fn (Request $r) => Limit::perMinute(config('admissions.rate_limits.submit_per_minute'))->by($r->ip()));
     }
 }

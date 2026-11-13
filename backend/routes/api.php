@@ -15,14 +15,14 @@ use App\Http\Controllers\NotificationAdministrationController;
 Route::prefix('v1')->group(function (): void {
     Route::withoutMiddleware(EnsureFrontendRequestsAreStateful::class)->group(function (): void {
         Route::get('/admissions/capabilities', AdmissionCapabilitiesController::class);
-        Route::post('/applications', [ApplicationController::class, 'store'])->middleware('throttle:admissions');
+        Route::post('/applications', [ApplicationController::class, 'store'])->middleware('throttle:submit');
         Route::post('/applications/track', ApplicationTrackingController::class)->middleware('throttle:tracking');
         Route::post('/applications/appeal', [AdmissionCaseworkController::class, 'appeal'])->middleware('throttle:admissions');
         Route::post('/applications/corrections/submit', [AdmissionCaseworkController::class, 'submitCorrection'])->middleware('throttle:admissions');
         Route::post('/intakes', [IntakeController::class, 'store'])->middleware('throttle:intakes');
         Route::post('/intakes/resume', [IntakeController::class, 'resume'])->middleware('throttle:tracking');
         Route::post('/intakes/sponsors', [IntakeController::class, 'replace'])->middleware('throttle:intakes');
-        Route::post('/intakes/submit', [IntakeController::class, 'submit'])->middleware('throttle:admissions');
+        Route::post('/intakes/submit', [IntakeController::class, 'submit'])->middleware('throttle:submit');
     });
     Route::middleware('auth:sanctum')->prefix('sponsor')->group(function (): void {
         Route::get('/invitations', [SponsorInvitationController::class, 'index']);

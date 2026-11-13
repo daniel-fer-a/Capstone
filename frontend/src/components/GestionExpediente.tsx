@@ -5,6 +5,7 @@ import { peticionPrivada, type Sesion } from '../lib/httpPrivado'
 import { fechaLarga } from '../lib/formato'
 import { Aviso, Field } from './ui'
 import { botonPrimario, inputCls } from './estilos'
+import { nuevaClave } from '../lib/clave'
 
 export default function GestionExpediente({ id, legal, version, estado, gestion, sesion, actualizar }: { id: string; legal: string; version: string; estado: string; gestion: Gestion; sesion: Sesion; actualizar: () => Promise<void> }) {
   const abierta = gestion.corrections.some(c => ['waiting_applicant', 'submitted'].includes(c.status))
@@ -42,7 +43,7 @@ function SolicitarDocumentos({ id, legal, version, actualizar }: { id: string; l
   const enviar = async (ev: FormEvent) => {
     ev.preventDefault()
     if (bloqueo.current || !kinds.length || !reason.trim()) return
-    bloqueo.current = true; setOcupado(true); setError(''); clave.current ??= crypto.randomUUID()
+    bloqueo.current = true; setOcupado(true); setError(''); clave.current ??= nuevaClave()
     try {
       await peticionPrivada(`/api/v1/admin/applications/${id}/corrections`, { reason: reason.trim(), requested_kinds: kinds, operation_key: clave.current }, { 'Idempotency-Key': clave.current })
       await actualizar()

@@ -1,6 +1,6 @@
 import ContinuidadPostulante from '../components/ContinuidadPostulante'
 import { leerGestion, tituloGestion, type Gestion } from '../lib/expediente'
-import { useRef, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Aviso, Field, Pagina } from '../components/ui'
 import { botonPrimario, inputCls } from '../components/estilos'
 import { ApiError, esObjeto, solicitudJson } from '../lib/api'
@@ -22,6 +22,12 @@ export default function Seguimiento() {
   const [mostrar, setMostrar] = useState(false)
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState('')
+  const [espera, setEspera] = useState(0)
+  useEffect(() => {
+    if (!espera) return
+    const t = window.setTimeout(() => setEspera(v => v-1), 1000)
+    return () => window.clearTimeout(t)
+  }, [espera])
   const [resultado, setResultado] = useState<Seguimiento | null>(null)
 
   const consulta = useRef(0)
@@ -36,10 +42,14 @@ export default function Seguimiento() {
 
   const consultar = async (ev: FormEvent) => {
     ev.preventDefault()
-    if (enviando) return
+    if (enviando || espera > 0) return
     setResultado(null)
     if (!folio.trim() || !/^[A-Za-z0-9]{64}$/.test(codigo.trim())) {
       setError('Ingresa el folio y el código privado de 64 caracteres que figuran en tu comprobante.')
+      return
+    }
+    if (/^CCHIA-PRE-/i.test(folio.trim())) {
+      setError('Ese es el folio privado de patrocinios. Aquí necesitas el folio formal que recibes al enviar. Si aún no enviaste, usa «Retomar solicitud».')
       return
     }
     setEnviando(true)
@@ -47,6 +57,7 @@ export default function Seguimiento() {
     try {
       await cargar()
     } catch (err) {
+      if (err instanceof ApiError && err.status === 429) setEspera(err.reintentarEnSegundos ?? 60)
       setError(err instanceof ApiError && err.status === 404 ? 'No encontramos una solicitud con ese folio y código. Revisa ambos datos.' : err instanceof ApiError ? err.message : 'No pudimos consultar la solicitud. Inténtalo nuevamente.')
     } finally { setEnviando(false) }
   }
@@ -57,7 +68,8 @@ export default function Seguimiento() {
       <Field id="codigo" label="Código privado de seguimiento"><input id="codigo" type={mostrar ? 'text' : 'password'} value={codigo} onChange={(ev) => { consulta.current++; setCodigo(ev.target.value); setResultado(null) }} maxLength={64} autoComplete="off" className={inputCls(false)} required /></Field>
       <button type="button" onClick={() => setMostrar((v) => !v)} className="text-sm text-navy underline">{mostrar ? 'Ocultar código' : 'Mostrar código'}</button>
       {error && <Aviso tipo="error">{error}</Aviso>}
-      <div><button type="submit" disabled={enviando} className={botonPrimario}>{enviando ? 'Consultando…' : 'Consultar estado'}</button></div>
+      {espera > 0 && <p className='text-sm' role="status">Podrás reintentar en {espera} segundos.</p>}
+      <div><button type="submit" disabled={enviando || espera > 0} className={botonPrimario}>{enviando ? 'Consultando…' : 'Consultar estado'}</button></div>
     </form>
     {resultado && <section className="mt-6 max-w-2xl rounded-xl border border-line bg-white p-5 sm:p-6" aria-live="polite">
       <h2 className="text-2xl font-bold text-navy">{resultado.casework ? tituloGestion(resultado.casework, resultado.status) ?? nombreEstado(resultado.status) : nombreEstado(resultado.status)}</h2>
