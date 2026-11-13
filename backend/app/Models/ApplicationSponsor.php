@@ -16,7 +16,7 @@ class ApplicationSponsor extends Model
 
     protected function casts(): array
     {
-        return ['checked_at' => 'immutable_datetime', 'position' => 'integer'];
+        return ['checked_at' => 'immutable_datetime', 'confirmed_at' => 'immutable_datetime', 'position' => 'integer'];
     }
 
     public function application(): BelongsTo

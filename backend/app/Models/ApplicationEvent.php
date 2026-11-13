@@ -23,4 +23,9 @@ class ApplicationEvent extends Model
     {
         return $this->belongsTo(AdmissionApplication::class, 'application_id');
     }
+
+    public function actor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'actor_user_id');
+    }
 }

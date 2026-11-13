@@ -1,0 +1,85 @@
+import ContinuidadPostulante from '../components/ContinuidadPostulante'
+import { leerGestion, tituloGestion, type Gestion } from '../lib/expediente'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { Aviso, Field, Pagina } from '../components/ui'
+import { botonPrimario, inputCls } from '../components/estilos'
+import { ApiError, esObjeto, solicitudJson } from '../lib/api'
+import { fechaLarga } from '../lib/formato'
+import { nombreEstado } from '../lib/estados'
+import { usePostulacion } from '../postulacion/postulacionContext'
+
+type Seguimiento = {
+  reference: string; status: string; submitted_at: string; decision_at: string | null
+  history: { action: string; label: string; occurred_at: string }[]
+  casework?: Gestion
+  decision?: { outcome: string; reason: string; meeting_date: string } | null
+}
+
+export default function Seguimiento() {
+  const { comprobante } = usePostulacion()
+  const [folio, setFolio] = useState(comprobante?.folio ?? '')
+  const [codigo, setCodigo] = useState('')
+  const [mostrar, setMostrar] = useState(false)
+  const [enviando, setEnviando] = useState(false)
+  const [error, setError] = useState('')
+  const [espera, setEspera] = useState(0)
+  useEffect(() => {
+    if (!espera) return
+    const t = window.setTimeout(() => setEspera(v => v-1), 1000)
+    return () => window.clearTimeout(t)
+  }, [espera])
+  const [resultado, setResultado] = useState<Seguimiento | null>(null)
+
+  const consulta = useRef(0)
+  const cargar = async () => {
+    const numero = ++consulta.current
+    const cuerpo = await solicitudJson('/api/v1/applications/track', { method: 'POST', credentials: 'omit', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reference: folio.trim().toUpperCase(), tracking_token: codigo.trim() }) })
+    const d = esObjeto(cuerpo) && esObjeto(cuerpo.data) ? cuerpo.data : null
+    if (!d || typeof d.reference !== 'string' || typeof d.status !== 'string' || typeof d.submitted_at !== 'string' || !Array.isArray(d.history)) throw new Error('Respuesta inválida')
+    if (d.casework !== undefined) leerGestion({ data: d.casework })
+    if (numero === consulta.current) setResultado(d as Seguimiento)
+  }
+
+  const consultar = async (ev: FormEvent) => {
+    ev.preventDefault()
+    if (enviando || espera > 0) return
+    setResultado(null)
+    if (!folio.trim() || !/^[A-Za-z0-9]{64}$/.test(codigo.trim())) {
+      setError('Ingresa el folio y el código privado de 64 caracteres que figuran en tu comprobante.')
+      return
+    }
+    if (/^CCHIA-PRE-/i.test(folio.trim())) {
+      setError('Ese es el folio privado de patrocinios. Aquí necesitas el folio formal que recibes al enviar. Si aún no enviaste, usa «Retomar solicitud».')
+      return
+    }
+    setEnviando(true)
+    setError('')
+    try {
+      await cargar()
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 429) setEspera(err.reintentarEnSegundos ?? 60)
+      setError(err instanceof ApiError && err.status === 404 ? 'No encontramos una solicitud con ese folio y código. Revisa ambos datos.' : err instanceof ApiError ? err.message : 'No pudimos consultar la solicitud. Inténtalo nuevamente.')
+    } finally { setEnviando(false) }
+  }
+
+  return <Pagina migas="Consultar postulación" etiqueta="Consulta privada" titulo="Consulta tu postulación" bajada="Usa el folio y el código privado de tu comprobante. No necesitas iniciar sesión.">
+    <form onSubmit={consultar} className="max-w-2xl space-y-5 rounded-xl border border-line bg-white p-5 sm:p-6" noValidate>
+      <Field id="folio" label="Folio de postulación"><input id="folio" value={folio} onChange={(ev) => { consulta.current++; setFolio(ev.target.value); setResultado(null) }} maxLength={40} autoComplete="off" className={inputCls(false)} required /></Field>
+      <Field id="codigo" label="Código privado de seguimiento"><input id="codigo" type={mostrar ? 'text' : 'password'} value={codigo} onChange={(ev) => { consulta.current++; setCodigo(ev.target.value); setResultado(null) }} maxLength={64} autoComplete="off" className={inputCls(false)} required /></Field>
+      <button type="button" onClick={() => setMostrar((v) => !v)} className="text-sm text-navy underline">{mostrar ? 'Ocultar código' : 'Mostrar código'}</button>
+      {error && <Aviso tipo="error">{error}</Aviso>}
+      {espera > 0 && <p className='text-sm' role="status">Podrás reintentar en {espera} segundos.</p>}
+      <div><button type="submit" disabled={enviando || espera > 0} className={botonPrimario}>{enviando ? 'Consultando…' : 'Consultar estado'}</button></div>
+    </form>
+    {resultado && <section className="mt-6 max-w-2xl rounded-xl border border-line bg-white p-5 sm:p-6" aria-live="polite">
+      <h2 className="text-2xl font-bold text-navy">{resultado.casework ? tituloGestion(resultado.casework, resultado.status) ?? nombreEstado(resultado.status) : nombreEstado(resultado.status)}</h2>
+      <p className="mt-2 break-all font-mono text-sm">{resultado.reference}</p>
+      <p className="mt-2 text-sm text-muted">Recibida el {fechaLarga(resultado.submitted_at)}</p>
+      {resultado.decision && <div className="mt-5 space-y-2 border-t border-line pt-4 text-sm"><h3 className="font-bold text-navy">Resolución del Directorio</h3><p>Fecha de la sesión: {resultado.decision.meeting_date}</p><p className="whitespace-pre-wrap break-words">{resultado.decision.reason}</p>{resultado.decision.outcome === 'rejected' && !resultado.casework?.appeal && <p>El procedimiento de apelación se canaliza ante el Directorio para su resolución en la próxima Asamblea de socios.</p>}</div>}
+      {resultado.casework && <ContinuidadPostulante gestion={resultado.casework} estado={resultado.status} credenciales={{ reference: resultado.reference, tracking_token: codigo.trim() }} actualizar={cargar} />}
+      <h3 className="mt-6 font-bold text-navy">Historial de tu solicitud</h3>
+      <ol className="mt-3 space-y-3">{resultado.history.map((item, i) => <li key={`${item.action}-${i}`} className="border-l-2 border-teal pl-4 text-sm"><p className="font-semibold">{item.label}</p><p className="text-xs text-muted">{fechaLarga(item.occurred_at)}</p></li>)}</ol>
+      <div className="mt-5"><Aviso>{['approved', 'rejected'].includes(resultado.status) ? 'El resultado corresponde al acuerdo registrado. Conserva tu comprobante para las gestiones posteriores que correspondan.' : 'La recepción y el inicio de la revisión no otorgan membresía automática. Conserva tu comprobante mientras se resuelve la solicitud.'}</Aviso></div>
+    </section>}
+  </Pagina>
+}
