@@ -16,6 +16,7 @@ La aplicación integra React y TypeScript con una API Laravel y PostgreSQL 18. E
 |---|---|
 | `Fase 1` | Documentación de la primera fase académica. |
 | `Fase 2` | Documentación de la segunda fase académica. |
+| `Fase 3` | Documentación de la tercera y ultima fase académica. |
 | `backend` | Código y recursos de implementación conservados por el equipo. |
 | `docs` | Documentación técnica, evidencias y maqueta navegable. |
 
@@ -23,7 +24,7 @@ Los cronogramas se conservan en la raíz. Para el seguimiento se utiliza el cron
 
 ## Documentación e instalación
 
-La referencia principal es [Documentación general de CCHIA](docs/Documentacion_General_CCHIA_V3.0.docx). Reúne el trabajo realizado, el funcionamiento, la arquitectura, la instalación, la operación, la API, las pantallas, el modelo de datos, las pruebas y el plan de piloto y cierre. Los documentos anteriores de `docs` se conservan como antecedentes.
+La referencia principal es [Documentación general de CCHIA](docs/Documentacion_General_CCHIA_V3.0.docx). Reúne el trabajo realizado, el funcionamiento, la arquitectura, la instalación, la operación, la API, las pantallas, el modelo de datos, las pruebas y el plan de piloto y cierre, es un documento en constante actualización para hacer seguimiento a los cambios realizados. Los documentos anteriores de `docs` se conservan como antecedentes.
 
 La [maqueta navegable](docs/Maqueta_Alta_Fidelidad_V1.2.html) permite consultar la propuesta de interfaz; su navegación no sustituye las comprobaciones de la aplicación integrada.
 
