@@ -7,6 +7,7 @@ import { Field, Pagina } from '../components/ui'
 import { botonPrimario, botonSecundario, describedBy, inputCls } from '../components/estilos'
 import type { CampoFormulario } from '../lib/api'
 import { usePostulacion, type DatosNatural as Datos } from '../postulacion/postulacionContext'
+import { MODO_DEMO, ejemploNatural } from '../lib/demo'
 
 const CAMPOS_PASO_1: CampoFormulario[] = ['nombres', 'apellidos', 'edad', 'identificacion', 'correo', 'region', 'comuna', 'actividad']
 
@@ -20,6 +21,7 @@ export default function DatosNatural() {
     register,
     handleSubmit,
     setError,
+    reset,
     formState: { errors },
   } = useForm<Datos>({
     defaultValues: datos ?? {
@@ -64,6 +66,11 @@ export default function DatosNatural() {
         <form onSubmit={continuar} noValidate className="flex-1 rounded-xl border border-line bg-white p-6">
           <h2 className="text-xl font-bold text-navy">Tus antecedentes personales</h2>
           <p className="mb-5 text-sm text-muted">Todos los campos de este paso son obligatorios.</p>
+          {MODO_DEMO && (
+            <button type="button" className={botonSecundario + ' mb-5'} onClick={() => reset(ejemploNatural())}>
+              Rellenar con datos de ejemplo
+            </button>
+          )}
 
           <div className="grid gap-5 sm:grid-cols-2">
             <Field id="nombres" label="Nombres" hint="Escribe tus nombres." error={e('nombres')}>

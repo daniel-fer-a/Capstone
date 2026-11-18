@@ -1,0 +1,1 @@
+export const FEEDBACK_URL = 'https://cchia-fase3.codelium.cl/beta_testing_cchia.html'

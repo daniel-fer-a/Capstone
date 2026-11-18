@@ -1,6 +1,7 @@
 import { Link, NavLink, Outlet } from 'react-router'
 import logo from '../assets/logo-cchia.svg'
 import logoSecundario from '../assets/logo-cchia-secundario.svg'
+import FeedbackModal from './FeedbackModal'
 
 const enlace = ({ isActive }: { isActive: boolean }) =>
   `rounded-md px-3 py-2 text-sm ${isActive ? 'bg-tint font-semibold text-navy' : 'text-muted hover:text-navy'}`
@@ -40,8 +41,9 @@ export default function Layout() {
         <Outlet />
       </main>
       <footer className="border-t border-line bg-white">
-        <div className="mx-auto max-w-5xl px-5 py-4 text-xs text-muted">
-          CCHIA · Postulación e ingreso de socios
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-5 py-4 text-xs text-muted">
+          <span>CCHIA · Postulación e ingreso de socios</span>
+          <FeedbackModal />
         </div>
       </footer>
     </div>
