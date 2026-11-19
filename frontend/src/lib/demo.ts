@@ -16,3 +16,8 @@ export const ejemploJuridica = (): DatosJuridica => ({
   correo: `demo.${sufijo()}@example.test`, region: 'Metropolitana de Santiago', comuna: 'Vitacura',
   actividad: 'Plataforma de análisis de documentos con IA para organizaciones chilenas (datos de ejemplo).',
 })
+
+// Cuentas ficticias SOLO para la demostración. Las contraseñas quedan visibles en el sitio:
+// no reutilices ninguna contraseña real.
+export const SOCIO_1 = { email: 'socio1@example.org', password: 'claveprueba123' }
+export const SOCIO_2 = { email: 'socio2@example.org', password: 'claveprueba123' }
