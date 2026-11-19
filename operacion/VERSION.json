@@ -1,0 +1,14 @@
+{
+  "prepared_date": "2026-11-03",
+  "timezone": "America/Santiago",
+  "release": "colaboracion-y-accesos-20261103",
+  "source_archive": "CCHIA_Operacion_y_Continuidad_03_noviembre.zip",
+  "source_sha256": "483682ccada9c6751098d4304c3a3d7b496b7e3a33e7d6035559da90affc43e0",
+  "base_validation": "Fabián confirma todas las pruebas; sin cambios",
+  "scope": "perfiles y colaboración por comisión, conservando postulaciones y operación",
+  "increment_team_validation": "pending",
+  "expected_backend_tests": 169,
+  "native_client_group_tests": 7,
+  "expected_frontend_tests": 36,
+  "migrations": 12
+}

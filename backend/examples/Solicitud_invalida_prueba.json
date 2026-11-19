@@ -1,0 +1,10 @@
+{
+  "membership": "member",
+  "legal": "natural",
+  "name": "Persona Prueba Capstone",
+  "identifier": "PRUEBA-PN-001",
+  "email": "correo-invalido",
+  "address": "Domicilio ficticio para validación local",
+  "aiActivity": "Prueba ficticia del flujo de postulación de socios en desarrollo.",
+  "declaration_accepted": true
+}

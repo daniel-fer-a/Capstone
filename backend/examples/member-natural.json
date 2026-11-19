@@ -1,10 +1,13 @@
 {
   "membership": "member",
   "legal": "natural",
-  "name": "Persona de ejemplo",
-  "identifier": "Documento de ejemplo",
-  "email": "postulante@example.org",
-  "address": "Domicilio de ejemplo",
-  "aiActivity": "Desarrollo e investigación de inteligencia artificial.",
+  "givenNames": "Persona",
+  "familyNames": "de prueba",
+  "age": 30,
+  "identifier": "Identificación ficticia",
+  "email": "persona@example.test",
+  "region": "La Araucanía",
+  "commune": "Temuco",
+  "aiActivity": "Investigación y desarrollo en IA.",
   "declaration_accepted": true
 }

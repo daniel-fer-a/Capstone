@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy: #003764;
+  --color-teal: #008996;
+  --color-ink: #182b40;
+  --color-muted: #52647a;
+  --color-line: #dce4ee;
+  --color-canvas: #f4f7fb;
+  --color-tint: #edf3fb;
+  --color-ok: #236c4d;
+  --color-ok-bg: #e6f3ec;
+  --color-danger: #a82d3a;
+  --color-danger-bg: #fdeff1;
+  --color-warn: #8c590c;
+  --color-warn-bg: #fff6e6;
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+button, a, input, textarea, select { touch-action: manipulation; }
+button:not(:disabled), a { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+main:focus { outline: none; }
+input, textarea, select { min-width: 0; }
+dd { overflow-wrap: anywhere; }
+
+:focus-visible {
+  outline: 3px solid var(--color-teal);
+  outline-offset: 3px;
+}

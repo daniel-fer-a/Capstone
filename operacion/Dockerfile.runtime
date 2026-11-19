@@ -1,0 +1,37 @@
+FROM composer:2 AS composer
+FROM php:8.4-fpm-bookworm AS php-base
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libpq-dev libonig-dev libxml2-dev libzip-dev libicu-dev unzip git gosu \
+    && docker-php-ext-install pdo_pgsql mbstring dom xml xmlwriter zip intl opcache \
+    && rm -rf /var/lib/apt/lists/*
+COPY --from=composer /usr/bin/composer /usr/local/bin/composer
+WORKDIR /app
+COPY operacion/container/entrypoint.sh /usr/local/bin/cchia-entrypoint
+COPY operacion/container/scheduler.sh /usr/local/bin/cchia-scheduler
+COPY operacion/container/php.ini /usr/local/etc/php/conf.d/cchia.ini
+RUN chmod 0755 /usr/local/bin/cchia-entrypoint /usr/local/bin/cchia-scheduler
+ENTRYPOINT ["cchia-entrypoint"]
+CMD ["php-fpm"]
+
+FROM php-base AS qa
+COPY backend/ /app/
+RUN mkdir -p bootstrap/cache storage/app/private storage/framework/cache/data storage/framework/views storage/framework/sessions storage/logs \
+    && composer install --no-interaction --prefer-dist --no-progress \
+    && chown -R www-data:www-data storage bootstrap/cache
+
+FROM php-base AS release
+COPY backend/ /app/
+RUN mkdir -p bootstrap/cache storage/app/private storage/framework/cache/data storage/framework/views storage/framework/sessions storage/logs \
+    && composer install --no-dev --no-interaction --prefer-dist --no-progress --classmap-authoritative \
+    && chown -R www-data:www-data storage bootstrap/cache
+
+FROM node:24-bookworm AS frontend-build
+WORKDIR /frontend
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci --no-audit --no-fund
+COPY frontend/ ./
+RUN npm run build
+
+FROM nginx:stable-alpine AS web
+COPY --from=frontend-build /frontend/dist/ /usr/share/nginx/html/
+COPY operacion/container/nginx.conf /etc/nginx/conf.d/default.conf

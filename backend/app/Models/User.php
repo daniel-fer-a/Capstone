@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\ResetAccessPassword;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -19,6 +20,11 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return ['email_verified_at' => 'datetime', 'password' => 'hashed'];
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetAccessPassword($token));
     }
 
     public function roleAssignments(): HasMany
