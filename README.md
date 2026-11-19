@@ -24,7 +24,7 @@ Los cronogramas se conservan en la raíz. Para el seguimiento se utiliza el cron
 
 ## Documentación e instalación
 
-La referencia principal es [Documentación general de CCHIA](docs/Documentacion_General_CCHIA_V3.0.docx). Reúne el trabajo realizado, el funcionamiento, la arquitectura, la instalación, la operación, la API, las pantallas, el modelo de datos, las pruebas y el plan de piloto y cierre, es un documento en constante actualización para hacer seguimiento a los cambios realizados. Los documentos anteriores de `docs` se conservan como antecedentes.
+La referencia principal es [Documentación general de CCHIA](docs/Documentacion_General_CCHIA_V3.1_18-11-2026.docx). Reúne el trabajo realizado, el funcionamiento, la arquitectura, la instalación, la operación, la API, las pantallas, el modelo de datos, las pruebas y el plan de piloto y cierre, es un documento en constante actualización para hacer seguimiento a los cambios realizados. Los documentos anteriores de `docs` se conservan como antecedentes.
 
 La [maqueta navegable](docs/Maqueta_Alta_Fidelidad_V1.2.html) permite consultar la propuesta de interfaz; su navegación no sustituye las comprobaciones de la aplicación integrada. Tomarla como las primeras versiones, la pagina actual se puede ver en el código, mas pulida.
 
